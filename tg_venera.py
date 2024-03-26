@@ -2,7 +2,7 @@ import requests
 import telebot
 from telebot import types
 
-bot = telebot.TeleBot('6952931811:AAGaxnDxuIeDmcfB460Ce6JVlvMXJ2En278')
+bot = telebot.TeleBot('TOKEN')
 flag1 = False
 flag2 = False
 flag3 = False
