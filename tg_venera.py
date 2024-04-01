@@ -37,10 +37,51 @@ def prov(mes, vopr):
 
 def prosh_vop(chat_id, flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12, fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys):
     if flag2:
-        bot.send_message(chat_id, '''Введите дату рождения. 
-Например: 01.01.2000''')
+        bot.send_message(chat_id, '''''')
+        flag1 = True
+        flag2 = False
     elif flag3:
-        pass
+        bot.send_message(chat_id, '''''')
+        flag2 = True
+        flag3 = False
+    elif flag4:
+        bot.send_message(chat_id, '''''')
+        flag3 = True
+        flag4 = False
+    elif flag5:
+        bot.send_message(chat_id, '''''')
+        flag4 = True
+        flag5 = False
+    elif flag6:
+        bot.send_message(chat_id, '''''')
+        flag5 = True
+        flag6 = False
+    elif flag7:
+        bot.send_message(chat_id, '''''')
+        flag6 = True
+        flag3 = False
+    elif flag8:
+        bot.send_message(chat_id, '''''')
+        flag4 = True
+        flag3 = False
+    elif flag9:
+        bot.send_message(chat_id, '''''')
+        flag4 = True
+        flag3 = False
+    elif flag10:
+        bot.send_message(chat_id, '''''')
+        flag4 = True
+        flag3 = False
+    elif flag11:
+        bot.send_message(chat_id, '''''')
+        flag4 = True
+        flag3 = False
+    elif flag12:
+        bot.send_message(chat_id, '''''')
+        flag4 = True
+        flag3 = False
+    else:
+        bot.send_message(chat_id, 'иди нахуй')
     
 @bot.message_handler(commands = ['start'])
 def start(message):
