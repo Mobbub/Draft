@@ -35,6 +35,13 @@ def main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys):
 def prov(mes, vopr):
     pass
 
+def prosh_vop(chat_id, flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12, fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys):
+    if flag2:
+        bot.send_message(chat_id, '''Введите дату рождения. 
+Например: 01.01.2000''')
+    elif flag3:
+        pass
+    
 @bot.message_handler(commands = ['start'])
 def start(message):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -118,8 +125,16 @@ def zanovo(message):
     kb.add(btn2)
     bot.send_message(message.chat.id, 'Выберете действие', reply_markup=kb)
 
+@bot.message_handler(func = lambda message: message.text == 'Прошлый вопрос')
+def prosh_vopr(message):
+    global flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12, fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys
+    bot.send_message(message.chat.id, 'prosh_vop(flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12, fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys)')
 @bot.message_handler(func = lambda message: True)
 def info(message):
+    # if message.text == 'Эпитафия' or message.text == 'Биография' or message.text == 'И то и то':
+    #     main(message.chat.id, message.text)
+    # else:
+    #     bot.send_message(message.chat.id, 'Моя твоя не понимать')
     global flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12, fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys
     if flag1:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
