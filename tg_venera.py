@@ -28,17 +28,6 @@ deti = ''
 vnuki = ''
 dost = ''
 deys = ''
-fl1 = False
-fl2 = False
-fl3 = False
-fl4 = False
-fl5 = False
-fl6 = False
-fl7 = False
-fl8 = False
-fl9 = False
-fl10 = False
-fl11 = False
 
 def main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys):
     pass
@@ -46,64 +35,65 @@ def main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys):
 def prov(mes, vopr):
     return True
 
-def prosh_vop(flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12):
-    global fl1, fl2, fl3, fl4, fl5, fl6, fl7, fl8, fl9, fl10, fl11
-    fl1 = False
-    fl2 = False
-    fl3 = False
-    fl4 = False
-    fl5 = False
-    fl6 = False
-    fl7 = False
-    fl8 = False
-    fl9 = False
-    fl10 = False
-    fl11 = False
+def prosh_vop():
+    global flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10 
     if flag2:
-        fl1 = True
+        flag1 = True
+        print(1)
         return '''Введите ФИО.
 Например: Иванов Иван Иванович'''
     elif flag3:
-        fl2 = True
+        flag2 = True
+        print(2)
         return '''Введите дату рождения. 
 Например: 01.01.2000'''
     elif flag4:
-        fl3 = True
+        flag3 = True
+        print(3)
         return '''Введите дату смерти. 
 Например: 01.01.2000'''
     elif flag5:
-        fl4 = True
+        flag4 = True
+        print(4)
         return '''Введите место рождения. 
 Например: Россия'''
     elif flag6:
-        fl5 = True
+        flag5 = True
+        print(5)
         return '''Введите место смерти.
 Например: Россия'''
     elif flag7:
-        fl6 = True
+        flag6 = True
+        print(6)
         return '''Введите ФИО супруга(ги).
 Например: Иванов Иван Иванович'''
     elif flag8:
-        fl7 = True
+        flag7 = True
+        print(7)
         return '''Укажите учебное заведение, которое закончил этот человек.
 Например: Физико-технический институ (ФТИ) КФУ им. Вернадского'''
     elif flag9:
-        fl8 = True
+        flag8 = True
+        print(8)
         return '''Укажите род деятельности человека.
 Например: Учёный математик'''
     elif flag10:
-        fl9 = True
+        flag9 = True
+        print(9)
         return '''Укажите гражданство человека.
 Например: Россия'''
     elif flag11:
-        fl10 = True
+        flag10 = True
+        print(10)
         return '''Укажите ФИО детей.
 Например: Иванов Иван Иванович'''
     elif flag12:
-        fl11 = True
+        flag11 = True
+        print(11)
         return '''Укажите ФИО внуков:
 Например: Иванов Иван Иванович'''
     else:
+        print(12)
         return 'иди нахуй'
     
 @bot.message_handler(commands = ['start'])
@@ -113,6 +103,7 @@ def start(message):
     btn2 = types.KeyboardButton(text = 'Биография')
     kb.add(btn1)
     kb.add(btn2)
+    print(13)
     bot.send_message(message.chat.id, 'Здрасьте. Выберете действие', reply_markup=kb)
 
 @bot.message_handler(func = lambda message: message.text == 'Эпитафия')
@@ -125,6 +116,7 @@ def epitafia(message):
     kb.add(btn2)
     flag1 = True
     deys = 'Эпитафия'
+    print(14)
     bot.send_message(message.chat.id, '''Введите ФИО.
 Например: Иванов Иван Иванович''', reply_markup=kb)
     
@@ -138,6 +130,7 @@ def biografia(message):
     kb.add(btn2)
     flag1 = True
     deys = 'Биография'
+    print(15)
     bot.send_message(message.chat.id, '''Введите ФИО.
 Например: Иванов Иван Иванович''', reply_markup=kb)
     
@@ -149,6 +142,7 @@ def noviy(message):
     btn2 = types.KeyboardButton(text = 'Начать заново')
     kb.add(btn1)
     kb.add(btn2)
+    print(16)
     bot.send_message(message.chat.id, '''Вот {deys}
 {main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys)}''', reply_markup=kb)
     
@@ -185,12 +179,14 @@ def zanovo(message):
     btn2 = types.KeyboardButton(text = 'Биография')
     kb.add(btn1)
     kb.add(btn2)
+    print(17)
     bot.send_message(message.chat.id, 'Выберете действие', reply_markup=kb)
 
 @bot.message_handler(func = lambda message: message.text == 'Прошлый вопрос')
 def prosh_vopr(message):
     global flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12
-    bot.send_message(message.chat.id, f'{prosh_vop(flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12)}')
+    print(18)
+    bot.send_message(message.chat.id, f'{prosh_vop()}')
 
 @bot.message_handler(func = lambda message: True)
 def info(message):
@@ -199,7 +195,7 @@ def info(message):
     # else:
     #     bot.send_message(message.chat.id, 'Моя твоя не понимать')
     global flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12, fl1, fl2, fl3, fl4, fl5, fl6, fl7, fl8, fl9, fl10, fl11, fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys
-    if flag1 or fl1:
+    if flag1:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
@@ -211,13 +207,13 @@ def info(message):
             flag2 = True
             message.text = ''
             flag1 = False
-            fl1 = False
+            print(19)
             bot.send_message(message.chat.id, '''Введите дату рождения. 
 Например: 01.01.2000''', reply_markup=kb)
         else:
             bot.send_message(message.chat.id, '''Что то пошло не так, введите ФИО ещё раз, проверьте правильность написания. 
 Например: ''', reply_markup=kb)
-    elif flag2 or fl2:
+    elif flag2:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
@@ -229,13 +225,13 @@ def info(message):
             flag3 = True
             message.text = ''
             flag2 = False
-            fl2 = False
+            print(20)
             bot.send_message(message.chat.id, '''Введите дату смерти. 
 Например: 01.01.2000''', reply_markup=kb)
         else:
             bot.send_message(message.chat.id, '''Что то пошло не так, введите дату рождения ещё раз, проверьте правильность написания. 
 Например: 01.01.2000''', reply_markup=kb)
-    elif flag3 or fl3:
+    elif flag3:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
@@ -247,13 +243,13 @@ def info(message):
             flag4 = True
             message.text = ''
             flag3 = False
-            fl3 = False
+            print(21)
             bot.send_message(message.chat.id, '''Введите место рождения. 
 Например: Россия''', reply_markup=kb)
         else:
             bot.send_message(message.chat.id, '''Что то пошло не так, введите дату смерти ещё раз, проверьте правильность написания. 
 Например: 01.01.2000''', reply_markup=kb)
-    elif flag4 or fl4:
+    elif flag4:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
@@ -265,13 +261,13 @@ def info(message):
             flag5 = True
             message.text = ''
             flag4 = False
-            fl4 = False
+            print(22)
             bot.send_message(message.chat.id, '''Введите место смерти.
 Например: Россия''', reply_markup=kb)
         else:
             bot.send_message(message.chat.id, '''Что то пошло не так, введите место рождения ещё раз, проверьте правильность написания. 
 Например: Россия''', reply_markup=kb)
-    elif flag5 or fl5:
+    elif flag5:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
@@ -283,13 +279,13 @@ def info(message):
             flag6 = True
             message.text = ''
             flag5 = False
-            fl5 = False
+            print(23)
             bot.send_message(message.chat.id, '''Введите ФИО супруга(ги).
 Например: Иванов Иван Иванович''', reply_markup=kb)
         else:
             bot.send_message(message.chat.id, '''Что то пошло не так, введите место смерти ещё раз, проверьте правильность написания. 
 Например: Россия''', reply_markup=kb)
-    elif flag6 or fl6:
+    elif flag6:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
@@ -301,13 +297,13 @@ def info(message):
             flag7 = True
             message.text = ''
             flag6 = False
-            fl6 = False
+            print(24)
             bot.send_message(message.chat.id, '''Укажите учебное заведение, которое закончил этот человек.
 Например: Физико-технический институ (ФТИ) КФУ им. Вернадского''', reply_markup=kb)
         else:
             bot.send_message(message.chat.id, '''Что то пошло не так, введите ФИО супруга(ги) ещё раз, проверьте правильность написания. 
 Например: Иванов Иван Иванович''', reply_markup=kb)
-    elif flag7 or fl7:
+    elif flag7:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
@@ -319,13 +315,13 @@ def info(message):
             flag8 = True
             message.text = ''
             flag7 = False
-            fl7 = False
+            print(25)
             bot.send_message(message.chat.id, '''Укажите род деятельности человека.
 Например: Учёный математик''', reply_markup=kb)
         else:
             bot.send_message(message.chat.id, '''Что то пошло не так, введите учебное заведение, которое закончил этот человек, проверьте правильность написания. 
 Например: Физико-технический институ (ФТИ) КФУ им. Вернадского''', reply_markup=kb)
-    elif flag8 or fl8:
+    elif flag8:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
@@ -337,13 +333,13 @@ def info(message):
             flag9 = True
             message.text = ''
             flag8 = False
-            fl8 = False
+            print(26)
             bot.send_message(message.chat.id, '''Укажите гражданство человека.
 Например: Россия''', reply_markup=kb)
         else:
             bot.send_message(message.chat.id, '''Что то пошло не так, введите род деятельности человека, проверьте правильность написания. 
 Например: Учёный математик''', reply_markup=kb)
-    elif flag9 or fl9:
+    elif flag9:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
@@ -355,13 +351,13 @@ def info(message):
             flag10 = True
             message.text = ''
             flag9 = False
-            fl9 = False
+            print(27)
             bot.send_message(message.chat.id, '''Укажите ФИО детей.
 Например: Иванов Иван Иванович''', reply_markup=kb)
         else:
             bot.send_message(message.chat.id, '''Что то пошло не так, введите гражданство человека, проверьте правильность написания. 
 Например: Россия''', reply_markup=kb)
-    elif flag10 or fl10:
+    elif flag10:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
@@ -373,13 +369,13 @@ def info(message):
             flag11 = True
             message.text = ''
             flag10 = False
-            fl10 = False
+            print(28)
             bot.send_message(message.chat.id, '''Укажите ФИО внуков:
 Например: Иванов Иван Иванович''', reply_markup=kb)
         else:
             bot.send_message(message.chat.id, '''Что то пошло не так, введите ФИО детей, проверьте правильность написания. 
 Например: Иванов Иван Иванович''', reply_markup=kb)
-    elif flag11 or fl11:
+    elif flag11:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
@@ -391,7 +387,7 @@ def info(message):
             flag12 = True
             message.text = ''
             flag11 = False
-            fl11 = False
+            print(29)
             bot.send_message(message.chat.id, '''Введите награды, премии или достижения, которые есть у человека.
 Например: Знак Почета 1954, 1981''', reply_markup=kb)
         else:
@@ -406,6 +402,7 @@ def info(message):
         if prov(message.text, 'дост'):
             dost = message.text
             flag12 = False
+            print(30)
             bot.send_message(message.chat.id, f'''Вот {deys}:
 {fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys}''', reply_markup=kb)
         else:
@@ -417,6 +414,7 @@ def info(message):
         btn2 = types.KeyboardButton(text = 'Биография')
         kb.add(btn1)
         kb.add(btn2)
+        print(31)
         bot.send_message(message.chat.id, 'моя твоя не понимать')
         bot.send_message(message.chat.id, 'Выберете действие', reply_markup=kb)
 
