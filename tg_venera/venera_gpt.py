@@ -1,41 +1,55 @@
 import requests
 
-def biograf(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost):
+
+# fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost - ключи словаря
+def get_yandexgpt_response(person_info: dict, request_subject: str) -> str:
+    ai_role = ''
+    if request_subject == 'биография':
+        ai_role = 'биограф'
+    elif request_subject == 'эпитафия':
+        ai_role = 'надгробный писатель'
+
     prompt = {
-        'modelUri': 'gpt://ключ польза/yandexgpt-lite',
+        'modelUri': 'gpt://b1g693nvdp4rv0o1rasl/yandexgpt-lite',
         'completionOptions': {
             'stream': False,
             'temperature': 0.6,
             'maxTokens': '2000'
         },
 
-        'message': [
+        'messages': [
             {
                 'role': 'system',
-                'text': 'Ты биограф, который составляет биографию о человеке.'
+                'text': f'Ты {ai_role}, который составляет {request_subject} о человеке.'
             },
             {
                 'role': 'user',
-                'text': 'Привет! Я бы хотел, чтоб ты составил биографию о человеке, сможешь сделать?'
+                'text': f'Привет! Я бы хотел, чтобы ты составил {request_subject} о человеке, сможешь сделать?'
             },
             {
-                'role': 'biograf',
-                'text': 'Привет! Хорошо, расскажи мне что нибудь о нём'
+                'role': 'assistant',
+                'text': 'Привет! Хорошо, расскажи мне что-нибудь о нём.'
             },
             {
                 'role': 'user',
-                'text': f'Его зовут {fio}, его дата смерти'
+                'text': f'"Этого человека зовут {person_info['fio']}, он родился {person_info['dr']} '
+                        f'в {person_info['mr']} и умер {person_info['ds']} в {person_info['ms']}. '
+                        f'Его супругом(супругой) был(была) {person_info['supr']}. Этот человек окончил '
+                        f'{person_info['obr']}. Его родом деятельности было {person_info['rd']}. Его гражданство - '
+                        f'{person_info['graj']}. Из детей у него(неё) были {person_info['deti']}, а из внуков - '
+                        f'{person_info['vnuki']}.'
             }
         ]
     }
 
     url = 'https://llm.api.cloud.yandex.net/foundationModels/v1/completion'
+
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Api-Key ключ'
+        'Authorization': 'Api-Key AQVN1_8mflMvhu03dhem2TFjCTnzl2-LSUuMXvtd'
     }
 
     response = requests.post(url, headers=headers, json=prompt)
-    return response.text
 
-print(biograf('Иван'))
+    return response.text
+    
