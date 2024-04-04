@@ -2,6 +2,7 @@ import requests
 import datetime
 import telebot
 from telebot import types
+from geopy.geocoders import Nominatim
 
 bot = telebot.TeleBot('token')
 flag1 = False
@@ -44,10 +45,13 @@ def prov(mes, vopr):
             return True
         except ValueError:
             return False
-    elif vopr == '':
-        pass
-    
-    elif vopr == 'Дети' or vopr == 'Внуки':
+    elif vopr == 'МР' or vopr == 'МС':
+            geolocator = Nominatim(user_agent="my_application")  # Создание объекта геокодера
+            location = geolocator.geocode(mes)  # Геокодирование места
+            if location is not None:
+                return True
+            return False
+    elif vopr == 'Дети' or vopr == 'Внуки' or vopr == 'Супруг':
         mes_nov = ''
         schet = 0
         for i in range(len(mes)):
@@ -58,70 +62,8 @@ def prov(mes, vopr):
         if (len(mes_nov.split()) % 3 == 0) and (len(mes_nov.split()) % 3 == schet - 1):
             return True
         return False
-    elif vopr == '':
-        pass
-        
-
-# def prosh():
-#     global flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10 
-#     if flag2:
-#         flag1 = True
-#         print(1)
-#         return '''Введите ФИО.
-# Например: Иванов Иван Иванович'''
-#     elif flag3:
-#         flag2 = True
-#         print(2)
-#         return '''Введите дату рождения. 
-# Например: 01.01.2000'''
-#     elif flag4:
-#         flag3 = True
-#         print(3)
-#         return '''Введите дату смерти. 
-# Например: 01.01.2000'''
-#     elif flag5:
-#         flag4 = True
-#         print(4)
-#         return '''Введите место рождения. 
-# Например: Россия'''
-#     elif flag6:
-#         flag5 = True
-#         print(5)
-#         return '''Введите место смерти.
-# Например: Россия'''
-#     elif flag7:
-#         flag6 = True
-#         print(6)
-#         return '''Введите ФИО супруга(ги).
-# Например: Иванов Иван Иванович'''
-#     elif flag8:
-#         flag7 = True
-#         print(7)
-#         return '''Укажите учебное заведение, которое закончил этот человек.
-# Например: Физико-технический институ (ФТИ) КФУ им. Вернадского'''
-#     elif flag9:
-#         flag8 = True
-#         print(8)
-#         return '''Укажите род деятельности человека.
-# Например: Учёный математик'''
-#     elif flag10:
-#         flag9 = True
-#         print(9)
-#         return '''Укажите гражданство человека.
-# Например: Россия'''
-#     elif flag11:
-#         flag10 = True
-#         print(10)
-#         return '''Укажите ФИО детей.
-# Например: Иванов Иван Иванович'''
-#     elif flag12:
-#         flag11 = True
-#         print(11)
-#         return '''Укажите ФИО внуков:
-# Например: Иванов Иван Иванович'''
-#     else:
-#         print(12)
-#         return 'иди нахуй'
+    else:
+        return True
 
 def mass_for_main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys):
     massiv_otv = {
@@ -295,10 +237,6 @@ def prosh_vopr(message):
 
 @bot.message_handler(func = lambda message: True)
 def info(message):
-    # if message.text == 'Эпитафия' or message.text == 'Биография' or message.text == 'И то и то':
-    #     main(message.chat.id, message.text)
-    # else:
-    #     bot.send_message(message.chat.id, 'Моя твоя не понимать')
     global flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12, fl1, fl2, fl3, fl4, fl5, fl6, fl7, fl8, fl9, fl10, fl11, fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys
     if flag1:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
