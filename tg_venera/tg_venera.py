@@ -35,67 +35,88 @@ def main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys):
 def prov(mes, vopr):
     return True
 
-def prosh_vop():
-    global flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10 
-    if flag2:
-        flag1 = True
-        print(1)
-        return '''Введите ФИО.
-Например: Иванов Иван Иванович'''
-    elif flag3:
-        flag2 = True
-        print(2)
-        return '''Введите дату рождения. 
-Например: 01.01.2000'''
-    elif flag4:
-        flag3 = True
-        print(3)
-        return '''Введите дату смерти. 
-Например: 01.01.2000'''
-    elif flag5:
-        flag4 = True
-        print(4)
-        return '''Введите место рождения. 
-Например: Россия'''
-    elif flag6:
-        flag5 = True
-        print(5)
-        return '''Введите место смерти.
-Например: Россия'''
-    elif flag7:
-        flag6 = True
-        print(6)
-        return '''Введите ФИО супруга(ги).
-Например: Иванов Иван Иванович'''
-    elif flag8:
-        flag7 = True
-        print(7)
-        return '''Укажите учебное заведение, которое закончил этот человек.
-Например: Физико-технический институ (ФТИ) КФУ им. Вернадского'''
-    elif flag9:
-        flag8 = True
-        print(8)
-        return '''Укажите род деятельности человека.
-Например: Учёный математик'''
-    elif flag10:
-        flag9 = True
-        print(9)
-        return '''Укажите гражданство человека.
-Например: Россия'''
-    elif flag11:
-        flag10 = True
-        print(10)
-        return '''Укажите ФИО детей.
-Например: Иванов Иван Иванович'''
-    elif flag12:
-        flag11 = True
-        print(11)
-        return '''Укажите ФИО внуков:
-Например: Иванов Иван Иванович'''
-    else:
-        print(12)
-        return 'иди нахуй'
-    
+# def prosh():
+#     global flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10 
+#     if flag2:
+#         flag1 = True
+#         print(1)
+#         return '''Введите ФИО.
+# Например: Иванов Иван Иванович'''
+#     elif flag3:
+#         flag2 = True
+#         print(2)
+#         return '''Введите дату рождения. 
+# Например: 01.01.2000'''
+#     elif flag4:
+#         flag3 = True
+#         print(3)
+#         return '''Введите дату смерти. 
+# Например: 01.01.2000'''
+#     elif flag5:
+#         flag4 = True
+#         print(4)
+#         return '''Введите место рождения. 
+# Например: Россия'''
+#     elif flag6:
+#         flag5 = True
+#         print(5)
+#         return '''Введите место смерти.
+# Например: Россия'''
+#     elif flag7:
+#         flag6 = True
+#         print(6)
+#         return '''Введите ФИО супруга(ги).
+# Например: Иванов Иван Иванович'''
+#     elif flag8:
+#         flag7 = True
+#         print(7)
+#         return '''Укажите учебное заведение, которое закончил этот человек.
+# Например: Физико-технический институ (ФТИ) КФУ им. Вернадского'''
+#     elif flag9:
+#         flag8 = True
+#         print(8)
+#         return '''Укажите род деятельности человека.
+# Например: Учёный математик'''
+#     elif flag10:
+#         flag9 = True
+#         print(9)
+#         return '''Укажите гражданство человека.
+# Например: Россия'''
+#     elif flag11:
+#         flag10 = True
+#         print(10)
+#         return '''Укажите ФИО детей.
+# Например: Иванов Иван Иванович'''
+#     elif flag12:
+#         flag11 = True
+#         print(11)
+#         return '''Укажите ФИО внуков:
+# Например: Иванов Иван Иванович'''
+#     else:
+#         print(12)
+#         return 'иди нахуй'
+
+def mass_for_main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys):
+    massiv_otv = {
+        'fio': fio,
+        'dr': dr,
+        'ds': ds,
+        'mr': mr,
+        'ms': ms,
+        'supr': supr,
+        'obr': obr,
+        'rd': rd,
+        'graj': graj,
+        'deti': deti,
+        'vnuki': vnuki,
+        'dost': dost,
+        'deys': deys
+    }
+    for key, value in massiv_otv.items():
+        if value == 'Следующий вопрос':
+            massiv_otv[key] = None  
+    return main(massiv_otv)
+
 @bot.message_handler(commands = ['start'])
 def start(message):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -144,7 +165,7 @@ def noviy(message):
     kb.add(btn2)
     print(16)
     bot.send_message(message.chat.id, '''Вот {deys}
-{main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys)}''', reply_markup=kb)
+{mass_for_main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys)}''', reply_markup=kb)
     
 @bot.message_handler(func = lambda message: message.text == 'Начать заново')
 def zanovo(message):
@@ -184,9 +205,66 @@ def zanovo(message):
 
 @bot.message_handler(func = lambda message: message.text == 'Прошлый вопрос')
 def prosh_vopr(message):
-    global flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12
     print(18)
-    bot.send_message(message.chat.id, f'{prosh_vop()}')
+    global flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10, flag11, flag12 
+    if flag2:
+        flag1 = True
+        print(1)
+        bot.send_message(message.chat.id, '''Введите ФИО.
+Например: Иванов Иван Иванович''')
+    elif flag3:
+        flag2 = True
+        print(2)
+        bot.send_message(message.chat.id, '''Введите дату рождения. 
+Например: 01.01.2000''')
+    elif flag4:
+        flag3 = True
+        print(3)
+        bot.send_message(message.chat.id, '''Введите дату смерти. 
+Например: 01.01.2000''')
+    elif flag5:
+        flag4 = True
+        print(4)
+        bot.send_message(message.chat.id, '''Введите место рождения. 
+Например: Россия''')
+    elif flag6:
+        flag5 = True
+        print(5)
+        bot.send_message(message.chat.id, '''Введите место смерти.
+Например: Россия''')
+    elif flag7:
+        flag6 = True
+        print(6)
+        bot.send_message(message.chat.id, '''Введите ФИО супруга(ги).
+Например: Иванов Иван Иванович''')
+    elif flag8:
+        flag7 = True
+        print(7)
+        bot.send_message(message.chat.id, '''Укажите учебное заведение, которое закончил этот человек.
+Например: Физико-технический институ (ФТИ) КФУ им. Вернадского''')
+    elif flag9:
+        flag8 = True
+        print(8)
+        bot.send_message(message.chat.id, '''Укажите род деятельности человека.
+Например: Учёный математик''')
+    elif flag10:
+        flag9 = True
+        print(9)
+        bot.send_message(message.chat.id, '''Укажите гражданство человека.
+Например: Россия''')
+    elif flag11:
+        flag10 = True
+        print(10)
+        bot.send_message(message.chat.id, '''Укажите ФИО детей.
+Например: Иванов Иван Иванович''')
+    elif flag12:
+        flag11 = True
+        print(11)
+        bot.send_message(message.chat.id, '''Укажите ФИО внуков:
+Например: Иванов Иван Иванович''')
+    else:
+        print(12)
+        bot.send_message(message.chat.id, 'иди нахуй')
 
 @bot.message_handler(func = lambda message: True)
 def info(message):
@@ -218,8 +296,8 @@ def info(message):
         btn1 = types.KeyboardButton(text = 'Следующий вопрос')
         btn2 = types.KeyboardButton(text = 'Прошлый вопрос')
         btn3 = types.KeyboardButton(text = 'Начать заново')
-        kb.add(btn1, btn2)
-        kb.add(btn3)
+        kb.add(btn1)
+        kb.add(btn2)
         if prov(message.text, 'ДР'):
             dr = message.text
             flag3 = True
@@ -404,7 +482,7 @@ def info(message):
             flag12 = False
             print(30)
             bot.send_message(message.chat.id, f'''Вот {deys}:
-{fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys}''', reply_markup=kb)
+{mass_for_main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys)}''', reply_markup=kb)
         else:
             bot.send_message(message.chat.id, '''Что то пошло не так, введите награды, премии или достижения, которые есть у человека, проверьте правильность написания. 
 Например: Знак Почета 1954, 1981''', reply_markup=kb)
