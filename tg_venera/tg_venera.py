@@ -1,4 +1,5 @@
 import requests
+import datetime
 import telebot
 from telebot import types
 
@@ -33,7 +34,33 @@ def main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, deys):
     pass
 
 def prov(mes, vopr):
-    return True
+    if vopr == 'ФИО':
+         if len(mes.split()) == 3:
+             return True
+         return False
+    elif vopr == 'ДР' or vopr == 'ДС':
+        try:
+            date = datetime.datetime.strptime(mes, "%d.%m.%Y")
+            return True
+        except ValueError:
+            return False
+    elif vopr == '':
+        pass
+    
+    elif vopr == 'Дети' or vopr == 'Внуки':
+        mes_nov = ''
+        schet = 0
+        for i in range(len(mes)):
+            if mes[i] != ',':
+                mes_nov += mes[i]
+            else:
+                schet += 1
+        if (len(mes_nov.split()) % 3 == 0) and (len(mes_nov.split()) % 3 == schet - 1):
+            return True
+        return False
+    elif vopr == '':
+        pass
+        
 
 # def prosh():
 #     global flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8, flag9, flag10 
