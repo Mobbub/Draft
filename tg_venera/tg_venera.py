@@ -15,7 +15,6 @@ def main(person_info: dict, request_subject: dict) -> str:
         ai_role = 'биограф'
     elif request_subject['deys'] == 'эпитафия':
         ai_role = 'надгробный писатель'
-
     prompt = {
         'modelUri': 'gpt://token/yandexgpt-lite',
         'completionOptions': {
@@ -27,11 +26,11 @@ def main(person_info: dict, request_subject: dict) -> str:
         'messages': [
             {
                 'role': 'system',
-                'text': f'Ты {ai_role}, который составляет {request_subject['deys']} о человеке.'
+                'text': f'Ты {ai_role}, который составляет {request_subject["deys"]} о человеке.'
             },
             {
                 'role': 'user',
-                'text': f'Привет! Я бы хотел, чтобы ты составил {request_subject['deys']} о человеке, сможешь сделать?'
+                'text': f'Привет! Я бы хотел, чтобы ты составил {request_subject["deys"]} о человеке, сможешь сделать?'
             },
             {
                 'role': 'assistant',
@@ -39,12 +38,7 @@ def main(person_info: dict, request_subject: dict) -> str:
             },
             {
                 'role': 'user',
-                'text': f'Этого человека зовут {person_info['fio']}, он родился {person_info['dr']} '
-                        f'в {person_info['mr']} и умер {person_info['ds']} в {person_info['ms']}. '
-                        f'Его супругом(супругой) был(была) {person_info['supr']}. Этот человек окончил '
-                        f'{person_info['obr']}. Его родом деятельности было {person_info['rd']}. Его гражданство - '
-                        f'{person_info['graj']}. Из детей у него(неё) были {person_info['deti']}, а из внуков - '
-                        f'{person_info['vnuki']}.'
+                'text': f'Этого человека зовут {person_info["fio"]}, он родился {person_info["dr"]} в {person_info["mr"]} и умер {person_info["ds"]} в {person_info["ms"]}. Его супругом(супругой) был(была) {person_info["supr"]}. Этот человек окончил {person_info["obr"]}. Его родом деятельности было {person_info["rd"]}. Его гражданство - {person_info["graj"]}. Из детей у него(неё) были {person_info["deti"]}, а из внуков - {person_info["vnuki"]}. Его достижения - {person_info["dost"]}'
             }
         ]
     }
@@ -196,7 +190,7 @@ def mass_for_main(fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost, d
     }
     for key, value in massiv_otv.items():
         if value == 'Следующий вопрос':
-            massiv_otv[key] = None  
+            massiv_otv[key] = 'Не указано'
     return main(massiv_otv, massiv_deys)
 
 @bot.message_handler(commands = ['start'])
