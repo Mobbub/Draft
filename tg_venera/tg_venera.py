@@ -155,7 +155,6 @@ def epitafia(message):
     session[chat_id]['deys'] = message.text
     session[chat_id]['flag1'] = True
     bot.send_message(message.chat.id, 'Введите <b><i>ФИО</i></b> 👤\nНапример: <i><code>Иванов Иван Иванович</code></i>', reply_markup = kb, parse_mode = "HTML")
-    print(deys)
     save_session(session)
 
 @bot.message_handler(func = lambda message: message.text == 'Биография')
