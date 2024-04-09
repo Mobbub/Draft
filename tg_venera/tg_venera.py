@@ -65,15 +65,22 @@ def save_session(session):
 
 session = load_session()
 
-def prov(mes, vopr):
+def prov(mes, vopr, chat_id):
     if vopr == 'ФИО':
          if len(mes.split()) == 3:
              return True
          return False
     elif vopr == 'ДР' or vopr == 'ДС':
         try:
-            date = datetime.datetime.strptime(mes, "%d.%m.%Y")
-            return True
+            date = datetime.datetime.strptime(mes, "%d.%m.%Y").date()
+            if vopr == 'ДР':
+                if date <= datetime.date.today():
+                    return True
+                return False
+            elif vopr == 'ДС':
+                if date >= datetime.datetime.strptime(session[chat_id]['dr'], "%d.%m.%Y").date():
+                    return True
+                return False
         except ValueError:
             return False
     elif vopr == 'МР' or vopr == 'МС' or vopr == 'ГРАЖ':
@@ -249,7 +256,7 @@ def info(message):
         btn16 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn14, btn15)
         kb.add(btn16)
-        if prov(message.text, 'ФИО') or message.text == 'Следующий вопрос🔼':
+        if prov(message.text, 'ФИО', chat_id) or message.text == 'Следующий вопрос🔼':
             session[chat_id]['fio'] = message.text
             session[chat_id]['flag2'] = True
             message.text = ''
@@ -257,7 +264,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Введите <b><i>дату рождения</i></b> 👶\nНапример: <code>01.01.2000</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите ФИО ещё раз, проверьте правильность написания.</i> ✅\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите ФИО ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag2']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -266,7 +273,7 @@ def info(message):
         btn19 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn17, btn18)
         kb.add(btn19)
-        if prov(message.text, 'ДР') or message.text == 'Следующий вопрос🔼':
+        if prov(message.text, 'ДР', chat_id) or message.text == 'Следующий вопрос🔼':
             session[chat_id]['dr'] = message.text
             session[chat_id]['flag3'] = True
             message.text = ''
@@ -274,7 +281,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Введите <b><i>дату смерти</i></b> 💀\nНапример: <code>01.01.2000</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите ФИО ещё раз, проверьте правильность написания.</i> ✅\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите дату рождения ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>01.01.2000</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag3']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -283,7 +290,7 @@ def info(message):
         btn22 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn20, btn21)
         kb.add(btn22)
-        if prov(message.text, 'ДС') or message.text == 'Следующий вопрос🔼':
+        if prov(message.text, 'ДС', chat_id) or message.text == 'Следующий вопрос🔼':
             session[chat_id]['ds'] = message.text
             session[chat_id]['flag4'] = True
             message.text = ''
@@ -291,7 +298,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Введите <b><i>место рождения</i></b> 🇷🇺\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите дату смерти ещё раз, проверьте правильность написания.</i> ✅\nНапример: <code>01.01.2000</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите дату смерти ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>01.01.2000</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag4']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -300,7 +307,7 @@ def info(message):
         btn25 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn23, btn24)
         kb.add(btn25)
-        if prov(message.text, 'МР') or message.text == 'Следующий вопрос🔼':
+        if prov(message.text, 'МР', chat_id) or message.text == 'Следующий вопрос🔼':
             session[chat_id]['mr'] = message.text
             session[chat_id]['flag5'] = True
             message.text = ''
@@ -308,7 +315,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Введите <b><i>место смерти</i></b> 🪦\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите место рождения ещё раз, проверьте правильность написания.</i> ✅\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите место рождения ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag5']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -317,7 +324,7 @@ def info(message):
         btn28 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn26, btn27)
         kb.add(btn28)
-        if prov(message.text, 'МС') or message.text == 'Следующий вопрос🔼':
+        if prov(message.text, 'МС', chat_id) or message.text == 'Следующий вопрос🔼':
             session[chat_id]['ms'] = message.text
             session[chat_id]['flag6'] = True
             message.text = ''
@@ -325,7 +332,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Введите <b><i>ФИО супруга(ги)</i></b> 👫\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите место смерти ещё раз, проверьте правильность написания.</i> ✅\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите место смерти ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag6']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -334,7 +341,7 @@ def info(message):
         btn31 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn29, btn30)
         kb.add(btn31)
-        if prov(message.text, 'Супруг') or message.text == 'Следующий вопрос🔼':
+        if prov(message.text, 'Супруг', chat_id) or message.text == 'Следующий вопрос🔼':
             session[chat_id]['supr'] = message.text
             session[chat_id]['flag7'] = True
             message.text = ''
@@ -342,7 +349,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Укажите <b><i> образование (учебное заведение), которое есть у человека</i></b> 🎓\nНапример: <code>КФУ им. Вернадского, информатика и вычислительная техника</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите ФИО супруга(ги) ещё раз, проверьте правильность написания.</i> ✅\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите ФИО супруга(ги) ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag7']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -351,7 +358,7 @@ def info(message):
         btn34 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn32, btn33)
         kb.add(btn34)
-        if prov(message.text, 'обр') or message.text == 'Следующий вопрос🔼':
+        if prov(message.text, 'обр', chat_id) or message.text == 'Следующий вопрос🔼':
             session[chat_id]['obr'] = message.text
             session[chat_id]['flag8'] = True
             message.text = ''
@@ -359,7 +366,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Укажите <b><i>род деятельности человека</i></b> 👨🏻‍🔧\nНапример: <code>Учёный математик</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите образование (учебное заведение), которое есть у человека ещё раз, проверьте правильность написания.</i> ✅\nНапример: <code>КФУ им. Вернадского, информатика и вычислительная техника</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите образование (учебное заведение), которое есть у человека ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>КФУ им. Вернадского, информатика и вычислительная техника</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag8']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -368,7 +375,7 @@ def info(message):
         btn37 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn35, btn36)
         kb.add(btn37)
-        if prov(message.text, 'РД') or message.text == 'Следующий вопрос🔼':
+        if prov(message.text, 'РД', chat_id) or message.text == 'Следующий вопрос🔼':
             session[chat_id]['rd'] = message.text
             session[chat_id]['flag9'] = True
             message.text = ''
@@ -376,7 +383,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Укажите <b><i>гражданство человека</i></b> 👳🏽‍♀️\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode="HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите род деятельности человека еще раз, проверьте правильность написания.</i> ✅\nНапример: <code>Учёный математик</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите род деятельности человека еще раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Учёный математик</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)    
     elif session[chat_id]['flag9']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -385,7 +392,7 @@ def info(message):
         btn40 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn38, btn39)
         kb.add(btn40)
-        if prov(message.text, 'ГРАЖ') or message.text == 'Следующий вопрос🔼':
+        if prov(message.text, 'ГРАЖ', chat_id) or message.text == 'Следующий вопрос🔼':
             session[chat_id]['graj'] = message.text
             session[chat_id]['flag10'] = True
             message.text = ''
@@ -393,7 +400,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Укажите <b><i>ФИО детей</i></b> 👨‍👩‍👧‍👦\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode="HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите гражданство человека еще раз, проверьте правильность написания.</i> ✅\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите гражданство человека еще раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag10']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -402,7 +409,7 @@ def info(message):
         btn43 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn41, btn42)
         kb.add(btn43)
-        if prov(message.text, 'Дети') or message.text == 'Следующий вопрос🔼':
+        if prov(message.text, 'Дети', chat_id) or message.text == 'Следующий вопрос🔼':
             session[chat_id]['deti'] = message.text
             session[chat_id]['flag11'] = True
             message.text = ''
@@ -410,7 +417,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Укажите <b><i>ФИО внуков</i></b> 👨‍👧‍👦\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode="HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите ФИО детей еще раз, проверьте правильность написания.</i> ✅\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите ФИО детей еще раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag11']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -419,7 +426,7 @@ def info(message):
         btn46 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn44, btn45)
         kb.add(btn46)
-        if prov(message.text, 'Внуки') or message.text == 'Следующий вопрос🔼':
+        if prov(message.text, 'Внуки', chat_id) or message.text == 'Следующий вопрос🔼':
             session[chat_id]['vnuki'] = message.text
             session[chat_id]['flag12'] = True
             message.text = ''
@@ -427,7 +434,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Введите <b><i>награды, премии или достижения, которые есть у человека</i></b> 🏅\nНапример: <code>Знак Почета 1954</code>', reply_markup=kb, parse_mode="HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите ФИО внуков еще раз, проверьте правильность написания.</i> ✅\nНапример: <code>Иванов Иван Иванович</code>''', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите ФИО внуков еще раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Иванов Иван Иванович</code>''', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag12']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -435,14 +442,13 @@ def info(message):
         btn48 = types.KeyboardButton(text = 'Начать заново↩️')
         kb.add(btn47)
         kb.add(btn48)
-        if prov(message.text, 'дост'):
+        if prov(message.text, 'дост', chat_id):
             session[chat_id]['dost'] = message.text
             session[chat_id]['flag12'] = False
-            bot.send_message(message.chat.id, f'''Вот {session[chat_id]['deys'].lower()}, которая у нас получилась:
-{mass_for_main(session[chat_id]['fio'], session[chat_id]['dr'], session[chat_id]['ds'], session[chat_id]['mr'], session[chat_id]['ms'], session[chat_id]['supr'], session[chat_id]['obr'], session[chat_id]['rd'], session[chat_id]['graj'], session[chat_id]['deti'], session[chat_id]['vnuki'], session[chat_id]['dost'], session[chat_id]['deys'])}''', reply_markup=kb)
+            bot.send_message(message.chat.id, f'''Вот {session[chat_id]['deys'].lower()}, которая у нас получилась:\n{mass_for_main(session[chat_id]['fio'], session[chat_id]['dr'], session[chat_id]['ds'], session[chat_id]['mr'], session[chat_id]['ms'], session[chat_id]['supr'], session[chat_id]['obr'], session[chat_id]['rd'], session[chat_id]['graj'], session[chat_id]['deti'], session[chat_id]['vnuki'], session[chat_id]['dost'], session[chat_id]['deys'])}''', reply_markup=kb)
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите награды, премии или достижения, которые есть у человека, еще раз, проверьте правильность написания.</i> ✅\nНапример: <code>Знак Почета 1954</code>''', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите награды, премии или достижения, которые есть у человека, еще раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Знак Почета 1954</code>''', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     else:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
