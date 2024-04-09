@@ -217,10 +217,10 @@ def prosh_vopr(message):
         bot.send_message(message.chat.id, 'Введите <b><i>ФИО</i></b> 👤\nНапример: <i><code>Иванов Иван Иванович</code></i>', reply_markup = kb, parse_mode = "HTML")
     elif session[chat_id]['flag3']:
         session[chat_id]['flag2'] = True
-        bot.send_message(message.chat.id, 'Введите <b><i>дату рождения</i></b> 👶\nНапример: <code>01.01.2000</code>', parse_mode = "HTML")
+        bot.send_message(message.chat.id, 'Введите <b><i>дату рождения</i></b> 👶\nНапример: <code>30.12.2000</code>', parse_mode = "HTML")
     elif session[chat_id]['flag4']:
         session[chat_id]['flag3'] = True
-        bot.send_message(message.chat.id, 'Введите <b><i>дату смерти</i></b> 💀\nНапример: <code>01.01.2000</code>', parse_mode = "HTML")
+        bot.send_message(message.chat.id, 'Введите <b><i>дату смерти</i></b> 💀\nНапример: <code>30.12.2000</code>', parse_mode = "HTML")
     elif session[chat_id]['flag5']:
         session[chat_id]['flag4'] = True
         bot.send_message(message.chat.id, 'Введите <b><i>место рождения</i></b> 🇷🇺\nНапример: <code>Россия</code>', parse_mode = "HTML")
@@ -261,7 +261,7 @@ def info(message):
             session[chat_id]['flag2'] = True
             message.text = ''
             session[chat_id]['flag1'] = False
-            bot.send_message(message.chat.id, 'Введите <b><i>дату рождения</i></b> 👶\nНапример: <code>01.01.2000</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Введите <b><i>дату рождения</i></b> 👶\nНапример: <code>30.12.2000</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
             bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите ФИО ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode = "HTML")
@@ -278,10 +278,10 @@ def info(message):
             session[chat_id]['flag3'] = True
             message.text = ''
             session[chat_id]['flag2'] = False
-            bot.send_message(message.chat.id, 'Введите <b><i>дату смерти</i></b> 💀\nНапример: <code>01.01.2000</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Введите <b><i>дату смерти</i></b> 💀\nНапример: <code>30.12.2000</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите дату рождения ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>01.01.2000</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите дату рождения ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>30.12.2000</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag3']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -295,10 +295,10 @@ def info(message):
             session[chat_id]['flag4'] = True
             message.text = ''
             session[chat_id]['flag3'] = False
-            bot.send_message(message.chat.id, 'Введите <b><i>место рождения</i></b> 🇷🇺\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Введите <b><i>место рождения</i></b> 🇷🇺\nНапример: <code>Россия, Москва</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите дату смерти ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>01.01.2000</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите дату смерти ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>30.12.2000</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag4']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -315,7 +315,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Введите <b><i>место смерти</i></b> 🪦\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите место рождения ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите место рождения ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Россия, Москва</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag5']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -332,7 +332,7 @@ def info(message):
             bot.send_message(message.chat.id, 'Введите <b><i>ФИО супруга(ги)</i></b> 👫\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
-            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите место смерти ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите место смерти ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Россия, Москва</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
     elif session[chat_id]['flag6']:
         kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -346,7 +346,7 @@ def info(message):
             session[chat_id]['flag7'] = True
             message.text = ''
             session[chat_id]['flag6'] = False
-            bot.send_message(message.chat.id, 'Укажите <b><i> образование (учебное заведение), которое есть у человека</i></b> 🎓\nНапример: <code>КФУ им. Вернадского, информатика и вычислительная техника</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Укажите <b><i>образование (учебное заведение), которое есть у человека</i></b> 🎓\nНапример: <code>КФУ им. Вернадского, информатика и вычислительная техника</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
             bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите ФИО супруга(ги) ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Иванов Иван Иванович</code>', reply_markup=kb, parse_mode = "HTML")
