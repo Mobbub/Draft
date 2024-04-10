@@ -223,10 +223,10 @@ def prosh_vopr(message):
         bot.send_message(message.chat.id, 'Введите <b><i>дату смерти</i></b> 💀\nНапример: <code>30.12.2000</code>', parse_mode = "HTML")
     elif session[chat_id]['flag5']:
         session[chat_id]['flag4'] = True
-        bot.send_message(message.chat.id, 'Введите <b><i>место рождения</i></b> 🇷🇺\nНапример: <code>Россия</code>', parse_mode = "HTML")
+        bot.send_message(message.chat.id, 'Введите <b><i>место рождения</i></b> 🇷🇺\nНапример: <code>Россия, Москва</code>', parse_mode = "HTML")
     elif session[chat_id]['flag6']:
         session[chat_id]['flag5'] = True
-        bot.send_message(message.chat.id, 'Введите <b><i>место смерти</i></b> 🪦\nНапример: <code>Россия</code>', parse_mode = "HTML")
+        bot.send_message(message.chat.id, 'Введите <b><i>место смерти</i></b> 🪦\nНапример: <code>Россия, Москва</code>', parse_mode = "HTML")
     elif session[chat_id]['flag7']:
         session[chat_id]['flag6'] = True
         bot.send_message(message.chat.id, 'Введите <b><i>ФИО супруга(ги)</i></b> 👫\nНапример: <code>Иванов Иван Иванович</code>', parse_mode = "HTML")
@@ -312,7 +312,7 @@ def info(message):
             session[chat_id]['flag5'] = True
             message.text = ''
             session[chat_id]['flag4'] = False
-            bot.send_message(message.chat.id, 'Введите <b><i>место смерти</i></b> 🪦\nНапример: <code>Россия</code>', reply_markup=kb, parse_mode = "HTML")
+            bot.send_message(message.chat.id, 'Введите <b><i>место смерти</i></b> 🪦\nНапример: <code>Россия, Москва</code>', reply_markup=kb, parse_mode = "HTML")
             save_session(session)
         else:
             bot.send_message(message.chat.id, 'Что то пошло не так... 😵‍💫\n<i>Введите место рождения ещё раз, проверьте правильность и логику написанного.</i> ✅\nНапример: <code>Россия, Москва</code>', reply_markup=kb, parse_mode = "HTML")
