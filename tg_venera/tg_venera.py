@@ -4,7 +4,7 @@ from geopy.geocoders import Nominatim
 from telebot.handler_backends import BaseMiddleware
 from telebot.handler_backends import CancelUpdate
 
-bot = telebot.TeleBot('token', use_class_middlewares = True)
+bot = telebot.TeleBot('token_bot', use_class_middlewares = True)
 deys = ''
 
 class SimpleMiddleware(BaseMiddleware):
@@ -34,10 +34,10 @@ def main(person_info: dict, request_subject: dict) -> str:
     elif request_subject['deys'] == 'эпитафия':
         ai_role = 'писатель эпитафий'
     prompt = {
-        'modelUri': 'gpt://token/yandexgpt-lite',
+        'modelUri': 'gpt://token_catalog/yandexgpt-lite',
         'completionOptions': {
             'stream': False,
-            'temperature': 0.6,
+            'temperature': 1,
             'maxTokens': '2000'
         },
         'messages': [
@@ -62,14 +62,13 @@ def main(person_info: dict, request_subject: dict) -> str:
     url = 'https://llm.api.cloud.yandex.net/foundationModels/v1/completion'
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Api-Key token'
+        'Authorization': 'Api-Key token_key_gpt'
     }
     response = requests.post(url, headers=headers, json=prompt)
     start_point = '\\\\n\\\\n'
     end_point = '"},"status"'
     result = re.search(f'{start_point}(.*?){end_point}', response.text)
-    if result:
-        print(result)
+    if result: 
         return result.group(1).replace('\\n', '\n')
     else:
         return ''
