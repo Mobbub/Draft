@@ -1,16 +1,38 @@
-import requests, datetime, telebot, pickle, re
+import requests, telebot, pickle, re, datetime
 from telebot import types
 from geopy.geocoders import Nominatim
+from telebot.handler_backends import BaseMiddleware
+from telebot.handler_backends import CancelUpdate
 
-bot = telebot.TeleBot('token')
+bot = telebot.TeleBot('token', use_class_middlewares = True)
 deys = ''
+
+class SimpleMiddleware(BaseMiddleware):
+    def __init__(self, limit) -> None:
+        self.last_time = {}
+        self.limit = limit
+        self.update_types = ['message']
+
+    def pre_process(self, message, data):
+        if not message.from_user.id in self.last_time:
+            self.last_time[message.from_user.id] = message.date
+            return
+        if message.date - self.last_time[message.from_user.id] < self.limit:
+            bot.send_message(message.chat.id, 'Вы превысили скорость в отправке сообщений!🛑\n🚫Бот не будет реагировать на такую скорость🚫')
+            return CancelUpdate()
+        self.last_time[message.from_user.id] = message.date
+
+    def post_process(self, message, data, exception):
+        pass
+
+bot.setup_middleware(SimpleMiddleware(0.01))
 
 def main(person_info: dict, request_subject: dict) -> str:
     ai_role = ''
     if request_subject['deys'] == 'биография':
         ai_role = 'биограф'
     elif request_subject['deys'] == 'эпитафия':
-        ai_role = 'надгробный писатель'
+        ai_role = 'писатель эпитафий'
     prompt = {
         'modelUri': 'gpt://token/yandexgpt-lite',
         'completionOptions': {
@@ -47,6 +69,7 @@ def main(person_info: dict, request_subject: dict) -> str:
     end_point = '"},"status"'
     result = re.search(f'{start_point}(.*?){end_point}', response.text)
     if result:
+        print(result)
         return result.group(1).replace('\\n', '\n')
     else:
         return ''
@@ -74,11 +97,11 @@ def prov(mes, vopr, chat_id):
         try:
             date = datetime.datetime.strptime(mes, "%d.%m.%Y").date()
             if vopr == 'ДР':
-                if date <= datetime.date.today():
+                if date <= date.today():
                     return True
                 return False
             elif vopr == 'ДС':
-                if date >= datetime.datetime.strptime(session[chat_id]['dr'], "%d.%m.%Y").date() and date <= datetime.date.today():
+                if date >= datetime.datetime.strptime(session[chat_id]['dr'], "%d.%m.%Y").date() and date <= date.today():
                     return True
                 return False
         except ValueError:
