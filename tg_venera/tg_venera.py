@@ -1,8 +1,7 @@
 import requests, telebot, pickle, re, datetime
 from telebot import types
 from geopy.geocoders import Nominatim
-from telebot.handler_backends import BaseMiddleware
-from telebot.handler_backends import CancelUpdate
+from telebot.handler_backends import BaseMiddleware, CancelUpdate
 
 bot = telebot.TeleBot('token_bot', use_class_middlewares = True)
 deys = ''
