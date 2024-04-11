@@ -1,30 +1,27 @@
 import requests
+import re
 
-
-# fio, dr, ds, mr, ms, supr, obr, rd, graj, deti, vnuki, dost - ключи словаря
-def get_yandexgpt_response(person_info: dict, request_subject: str) -> str:
+def get_yandexgpt_response(person_info: dict, request_subject: dict) -> str:
     ai_role = ''
-    if request_subject == 'биография':
+    if request_subject['deys'] == 'биография':
         ai_role = 'биограф'
-    elif request_subject == 'эпитафия':
-        ai_role = 'надгробный писатель'
-
+    elif request_subject['deys'] == 'эпитафия':
+        ai_role = 'писатель эпитафий'
     prompt = {
-        'modelUri': 'gpt://ключ/yandexgpt-lite',
+        'modelUri': 'gpt://token_katalog/yandexgpt-lite',
         'completionOptions': {
             'stream': False,
-            'temperature': 0.6,
+            'temperature': 0.8,
             'maxTokens': '2000'
         },
-
         'messages': [
             {
                 'role': 'system',
-                'text': f'Ты {ai_role}, который составляет {request_subject} о человеке.'
+                'text': f'Ты {ai_role}, который составляет {request_subject["deys"]} о человеке.'
             },
             {
                 'role': 'user',
-                'text': f'Привет! Я бы хотел, чтобы ты составил {request_subject} о человеке, сможешь сделать?'
+                'text': f'Привет! Я бы хотел, чтобы ты составил {request_subject["deys"]} о человеке, сможешь сделать?'
             },
             {
                 'role': 'assistant',
@@ -32,23 +29,20 @@ def get_yandexgpt_response(person_info: dict, request_subject: str) -> str:
             },
             {
                 'role': 'user',
-                'text': f'"Этого человека зовут {person_info['fio']}, он родился {person_info['dr']} '
-                        f'в {person_info['mr']} и умер {person_info['ds']} в {person_info['ms']}. '
-                        f'Его супругом(супругой) был(была) {person_info['supr']}. Этот человек окончил '
-                        f'{person_info['obr']}. Его родом деятельности было {person_info['rd']}. Его гражданство - '
-                        f'{person_info['graj']}. Из детей у него(неё) были {person_info['deti']}, а из внуков - '
-                        f'{person_info['vnuki']}.'
+                'text': f'Этого человека зовут {person_info["fio"]}, он родился {person_info["dr"]} в {person_info["mr"]} и умер {person_info["ds"]} в {person_info["ms"]}. Его супругом(супругой) был(была) {person_info["supr"]}. Этот человек окончил {person_info["obr"]}. Его родом деятельности было {person_info["rd"]}. Его гражданство - {person_info["graj"]}. Из детей у него(неё) были {person_info["deti"]}, а из внуков - {person_info["vnuki"]}. Его достижения - {person_info["dost"]}'
             }
         ]
     }
-
     url = 'https://llm.api.cloud.yandex.net/foundationModels/v1/completion'
-
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Api-Key ключ'
+        'Authorization': 'Api-Key token_gpt_key'
     }
-
     response = requests.post(url, headers=headers, json=prompt)
-
-    return response.text
+    start_point = '\\\\n\\\\n'
+    end_point = '"},"status"'
+    result = re.search(f'{start_point}(.*?){end_point}', response.text)
+    if result:
+        return result.group(1).replace('\\n', '\n')
+    else:
+        return ''
