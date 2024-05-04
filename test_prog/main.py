@@ -4,29 +4,68 @@ from datetime import date
 class WorkDB: ###
     def __init__(self) -> None:
         self.file_path = 'main.json'
-
-    def add_zap(self, new_data): ###
-        with open('main.json', 'r', encoding='utf-8') as f:
+        
+    def add_zap(self, new_data):
+        with open(self.file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
         keys=list(data.keys())
         second_key=keys[-1]
         data[str(int(second_key) + 1)] = new_data
-        with open('main.json', 'w', encoding='utf-8') as f:
+        with open(self.file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
             return 'Новая запись успешно добавлена'
 
-    def bal(self): ###
-        pass
+    def bal(self):
+        with open(self.file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return data['Баланс']
+
+    def bal_kat(self, type):
+        result = 0
+        with open(self.file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        keys=list(data.keys())
+        second_key=keys[-1]
+        for i in range(1, int(second_key)+1):
+            if type == 'доход':
+                if data[str(i)]['Категория'] == 'Доход':
+                    result+=data[str(i)]['Сумма']
+            else:
+                if data[str(i)]['Категория'] == 'Расход':
+                    result+=data[str(i)]['Сумма']
+        return result
+
+    def poisk(self, type):
+        result=''
+        with open(self.file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        keys=list(data.keys())
+        second_key=keys[-1]
+        for i in range(1, int(second_key)+1):
+            if type == 'доход':
+                if data[str(i)]['Категория'] == 'Доход':
+                    result+=f'\nНомер записи: {i}\nДата: {data[str(i)]["Дата"]}\nКатегория: {data[str(i)]["Категория"]}\nСумма: {data[str(i)]["Сумма"]}\nОписание: {data[str(i)]["Описание"]}\n'
+            elif type == 'расход':
+                if data[str(i)]['Категория'] == 'Расход':
+                    result+=f'\nНомер записи: {i}\nДата: {data[str(i)]["Дата"]}\nКатегория: {data[str(i)]["Категория"]}\nСумма: {data[str(i)]["Сумма"]}\nОписание: {data[str(i)]["Описание"]}\n'        
+        return result
 
 class Main:
     def __init__(self): ## Добавить списки для каждого действия
         self.actions = ['1', '2', '3', '4', '1.', '2.', '3.', '4.', 'вывод баланса', 'добавление записи', 'редактирование записи', 'поиск по записям']
         self.actions_1 = ['1', '1.', 'вывод баланса']
+        self.actions_1_1 = ['1', '1.', 'баланс']
+        self.actions_1_2 = ['2', '2.', 'доход']
+        self.actions_1_3 = ['3', '3.', 'расход']
         self.actions_2 = ['2', '2.', 'добавление записи']
-        self.actions_2_1 = ['1', '1.', 'расход']
-        self.actions_2_2 = ['2', '2.', 'доход']        
+        self.actions_2_1 = ['1', '1.', 'доход']
+        self.actions_2_2 = ['2', '2.', 'расход']        
         self.actions_3 = ['3', '3.', 'редактирование записи']
         self.actions_4 = ['4', '4.', 'поиск по записям']
+        self.actions_4_1 = ['1', '1.', 'доход']
+        self.actions_4_2 = ['2', '2.', 'расход']
+        self.actions_4_3 = ['3', '3.', 'дата']
+        self.actions_4_4 = ['4', '4.', 'сумма']
         self.add_zap = {
                 'Дата': '',
                 'Категория': '',
@@ -37,14 +76,23 @@ class Main:
     def main(self, deytv): ###
         work_db = WorkDB()
         if deytv in self.actions_1:
-            return f'Ваш балланс равен: {WorkDB.bal}' ###
-        
+            user_input = input('Выберите действие (укажите номер или само действие):\n1. Баланс\n2. Доход\n3. Расход\n> ').lower()
+            if user_input in self.actions_1_1:
+                result = work_db.bal()
+                return f'Ваш балланс равен: {result}'
+            elif user_input in self.actions_1_2:
+                result = work_db.bal_kat('доход')
+                return f'Ваш доход за всё время: {result}'
+            elif user_input in self.actions_1_3:
+                result = work_db.bal_kat('расход')
+                return f'Ваши расходы за всё время: {result}'
+
         elif deytv in self.actions_2:
-            user_input = input('Выберите категорию записи:\n1. Расход\n2. Доход\n> ')
+            user_input = input('Выберите категорию записи (укажите номер или саму категорию):\n1. Доход\n2. Расход\n> ')
             if user_input.lower() in self.actions_2_1:
-                self.add_zap['Категория'] = 'Расход'
-            elif user_input.lower() in self.actions_2_2:
                 self.add_zap['Категория'] = 'Доход'
+            elif user_input.lower() in self.actions_2_2:
+                self.add_zap['Категория'] = 'Расход'
             while True:
                 try:
                     self.add_zap['Сумма'] = int(input('Введите сумму:\n> '))
@@ -53,15 +101,25 @@ class Main:
                     print('Введите число а не строку')
             self.add_zap['Описание'] = input('Введите описание:\n> ')
             today = date.today()
-            formatted_date = today.strftime("%d-%m-%Y")
+            formatted_date = today.strftime("%Y-%d-%m")
             self.add_zap['Дата']=formatted_date
-            return work_db.add_zap(self.add_zap) ###
+            return work_db.add_zap(self.add_zap)
         
         elif deytv in self.actions_3:
             return "Редактирование записи"
         
         elif deytv in self.actions_4:
-            return "Поиск по записям"
+            user_input = input('Введите способ поиска записи:\n1. Доход\n2. Расход\n3. Дата\n4. Сумма\n> ').lower()
+            if user_input in self.actions_4_1:
+                result = work_db.poisk('доход')
+                return result
+            elif user_input in self.actions_4_2:
+                result = work_db.poisk('расход')
+                return result
+            elif user_input in self.actions_4_3:
+                pass
+            elif user_input in self.actions_4_4:
+                pass
 
     def run(self):
         while True:
@@ -80,8 +138,8 @@ if __name__ == "__main__":
 # Цель: Создать приложение для учета личных доходов и расходов.
 
 # Основные возможности:
-# 1. Вывод баланса: Показать текущий баланс, а также отдельно доходы и расходы.
-# 2. Добавление записи: Возможность добавления новой записи о доходе или расходе.
+# 1. Вывод баланса: Показать текущий баланс, а также отдельно доходы и расходы. СДЕЛАНО
+# 2. Добавление записи: Возможность добавления новой записи о доходе или расходе. СДЕЛАНО
 # 3. Редактирование записи: Изменение существующих записей о доходах и расходах.
 # 4. Поиск по записям: Поиск записей по категории, дате или сумме.
 
