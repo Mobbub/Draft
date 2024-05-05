@@ -38,6 +38,24 @@ class WorkDB: ###
                     result+=data[str(i)]['Сумма']
         return result
 
+    def red_zap(self, index, type, novoe):
+        with open(self.file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        if type == 'Сумма':
+            if data[str(index)]['Категория'] == 'Доход':
+                data['Баланс'] -= data[str(index)]['Сумма']
+            elif data[str(index)]['Категория'] == 'Расход':
+                data['Баланс'] += data[str(index)]['Сумма']
+
+            if data[str(index)]['Категория'] == 'Доход':
+                data['Баланс'] += novoe
+            elif data[str(index)]['Категория'] == 'Расход':
+                data['Баланс'] -= novoe
+        data[index][type] = novoe
+        with open(self.file_path, 'w', encoding='utf-8') as file:
+            json.dump(data, file, ensure_ascii=False, indent=4)
+        return 'Вы успешно изменили запись'
+
     def poisk(self, type, user_input):
         result=''
         with open(self.file_path, 'r', encoding='utf-8') as f:
@@ -70,6 +88,14 @@ class Main:
         self.actions_2_1 = ['1', '1.', 'доход']
         self.actions_2_2 = ['2', '2.', 'расход']        
         self.actions_3 = ['3', '3.', 'редактирование записи']
+        self.actions_3_1 = ['1', '1.', 'редактировать']
+        self.actions_3_1_1 = ['1', '1.', 'дата']
+        self.actions_3_1_2 = ['2', '2.', 'категория']
+        self.actions_3_1_2_1 = ['1', '1.', 'доход']
+        self.actions_3_1_2_2 = ['2', '2.', 'расход']
+        self.actions_3_1_3 = ['3', '3.', 'сумма']
+        self.actions_3_1_4 = ['4', '4.', 'описание']
+        self.actions_3_2 = ['2', '2.', 'удалить']
         self.actions_4 = ['4', '4.', 'поиск по записям']
         self.actions_4_1 = ['1', '1.', 'доход']
         self.actions_4_2 = ['2', '2.', 'расход']
@@ -122,8 +148,57 @@ class Main:
             return work_db.add_zap(self.add_zap)
         
         elif deytv in self.actions_3:
-            return "Редактирование записи"
-        
+            user_input = input('Выберите действие:\n1. Редактировать\n2. Удалить\n> ').lower()
+            if user_input in self.actions_3_1:
+                while True:
+                    user_input_index = input('Введите номер записи, которую вы хотите отредактировать:\n> ')
+                    try:
+                        number = int(user_input_index)
+                        break
+                    except ValueError:
+                        print('Введите число')
+                user_input_type = input('Что вы хотите в ней отредактировать:\n1. Дата\n2. Категория\n3. Сумма\n4. Описание\n> ')
+                if user_input_type in self.actions_3_1_1:
+                    user_input_type = 'Дата'   
+                    while True:
+                        user_input_zap_now = input('Введите новое значение\n> ')
+                        try:
+                            date = datetime.datetime.strptime(user_input_zap_now, "%Y-%m-%d")
+                            break
+                        except ValueError:
+                            print('Введите дату правильно') 
+                elif user_input_type in self.actions_3_1_2:
+                    user_input_type = 'Категория'
+                    while True:
+                        user_input_zap_now = input('Введите новое значение:\n1. Доход\n2. Расход\n> ').lower()
+                        if user_input_zap_now in self.actions_3_1_2_1:
+                            user_input_zap_now = 'Доход'
+                            break
+                        elif user_input_zap_now in self.actions_3_1_2_2:
+                            user_input_zap_now = 'Расход'
+                            break
+                elif user_input_type in self.actions_3_1_3:
+                    user_input_type = 'Сумма'
+                    while True:
+                        user_input_zap = input('Введите новое значение:\n> ')
+                        try:
+                            prov_user_input = int(user_input_zap)
+                            user_input_zap_now = prov_user_input
+                            break
+                        except ValueError:
+                            try:
+                                prov_user_input = float(user_input_zap)
+                                user_input_zap_now = prov_user_input
+                                break
+                            except ValueError:
+                                print('Введите правильно значение')    
+                elif user_input_type in self.actions_3_1_4:
+                    user_input_type = 'Описание'
+                    user_input_zap_now = input('Введите новое значение:\n>')
+                return work_db.red_zap(user_input_index, user_input_type, user_input_zap_now)
+            elif user_input in self.actions_3_2:
+                pass
+
         elif deytv in self.actions_4:
             user_input = input('Введите способ поиска записи:\n1. Доход\n2. Расход\n3. Дата\n4. Сумма\n> ').lower()
             if user_input in self.actions_4_1:
@@ -173,7 +248,7 @@ if __name__ == "__main__":
 # Основные возможности:
 # 1. Вывод баланса: Показать текущий баланс, а также отдельно доходы и расходы. СДЕЛАНО
 # 2. Добавление записи: Возможность добавления новой записи о доходе или расходе. СДЕЛАНО
-# 3. Редактирование записи: Изменение существующих записей о доходах и расходах.
+# 3. Редактирование записи: Изменение существующих записей о доходах и расходах. СДЕЛАНО на половину
 # 4. Поиск по записям: Поиск записей по категории, дате или сумме. СДЕЛАНО
 
 # Требования к программе:
