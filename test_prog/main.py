@@ -42,14 +42,14 @@ class WorkDB: ###
         with open(self.file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
         if type == 'Сумма':
-            if data[str(index)]['Категория'] == 'Доход':
-                data['Баланс'] -= data[str(index)]['Сумма']
-            elif data[str(index)]['Категория'] == 'Расход':
-                data['Баланс'] += data[str(index)]['Сумма']
+            if data[index]['Категория'] == 'Доход':
+                data['Баланс'] -= data[index]['Сумма']
+            elif data[index]['Категория'] == 'Расход':
+                data['Баланс'] += data[index]['Сумма']
 
-            if data[str(index)]['Категория'] == 'Доход':
+            if data[index]['Категория'] == 'Доход':
                 data['Баланс'] += novoe
-            elif data[str(index)]['Категория'] == 'Расход':
+            elif data[index]['Категория'] == 'Расход':
                 data['Баланс'] -= novoe
         data[index][type] = novoe
         with open(self.file_path, 'w', encoding='utf-8') as file:
@@ -75,7 +75,28 @@ class WorkDB: ###
             elif type == 'дата':
                 if str(data[str(i)]['Дата']) == user_input:
                     result+=f'\nНомер записи: {i}\nДата: {data[str(i)]["Дата"]}\nКатегория: {data[str(i)]["Категория"]}\nСумма: {data[str(i)]["Сумма"]}\nОписание: {data[str(i)]["Описание"]}\n'
+            elif type == 'все':
+                result+=f'\nНомер записи: {i}\nДата: {data[str(i)]["Дата"]}\nКатегория: {data[str(i)]["Категория"]}\nСумма: {data[str(i)]["Сумма"]}\nОписание: {data[str(i)]["Описание"]}\n'
         return result
+
+    def udal(self, index):
+        with open(self.file_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        if data[index]['Категория'] == 'Доход':
+                data['Баланс'] -= data[index]['Сумма']
+        elif data[index]['Категория'] == 'Расход':
+            data['Баланс'] += data[index]['Сумма']
+        if index in data:
+            del data[index]
+        new_data = {}
+        new_data["Баланс"] = data.pop("Баланс", 0)
+        index = 0
+        for key, value in data.items():
+            new_data[str(index)] = value
+            index += 1
+        with open(self.file_path, 'w', encoding='utf-8') as file:
+            json.dump(new_data, file, ensure_ascii=False, indent=4)
+        return 'Запись успешно удалена'
 
 class Main:
     def __init__(self): ## Добавить списки для каждого действия
@@ -148,7 +169,9 @@ class Main:
             return work_db.add_zap(self.add_zap)
         
         elif deytv in self.actions_3:
+            func_vivod = work_db.poisk('все', '')
             user_input = input('Выберите действие:\n1. Редактировать\n2. Удалить\n> ').lower()
+            print(f'Все ваши записи:\n{func_vivod}')
             if user_input in self.actions_3_1:
                 while True:
                     user_input_index = input('Введите номер записи, которую вы хотите отредактировать:\n> ')
@@ -197,7 +220,15 @@ class Main:
                     user_input_zap_now = input('Введите новое значение:\n>')
                 return work_db.red_zap(user_input_index, user_input_type, user_input_zap_now)
             elif user_input in self.actions_3_2:
-                pass
+                while True:
+                    user_input = input('Укажите номер записи, которую надо удалить:\n> ')
+                    try:
+                        prov_user_input = int(user_input)
+                        if prov_user_input > 0:
+                            break
+                    except ValueError:
+                        print('Введите номер записи:\n> ')
+                return work_db.udal(user_input)
 
         elif deytv in self.actions_4:
             user_input = input('Введите способ поиска записи:\n1. Доход\n2. Расход\n3. Дата\n4. Сумма\n> ').lower()
@@ -248,13 +279,13 @@ if __name__ == "__main__":
 # Основные возможности:
 # 1. Вывод баланса: Показать текущий баланс, а также отдельно доходы и расходы. СДЕЛАНО
 # 2. Добавление записи: Возможность добавления новой записи о доходе или расходе. СДЕЛАНО
-# 3. Редактирование записи: Изменение существующих записей о доходах и расходах. СДЕЛАНО на половину
+# 3. Редактирование записи: Изменение существующих записей о доходах и расходах. СДЕЛАНО
 # 4. Поиск по записям: Поиск записей по категории, дате или сумме. СДЕЛАНО
 
 # Требования к программе:
-# 1. Интерфейс: Реализация через консоль (CLI), без использования веб- или графического интерфейса (также без использования фреймворков таких как Django, FastAPI, Flask  и тд).
-# 2. Хранение данных: Данные должны храниться в текстовом файле. Формат файла определяется разработчиком.
-# 3. Информация в записях: Каждая запись должна содержать дату, категорию (доход/расход), сумму, описание (возможны дополнительные поля).
+# 1. Интерфейс: Реализация через консоль (CLI), без использования веб- или графического интерфейса (также без использования фреймворков таких как Django, FastAPI, Flask  и тд). СДЕЛАНО
+# 2. Хранение данных: Данные должны храниться в текстовом файле. Формат файла определяется разработчиком. СДЕЛАНО
+# 3. Информация в записях: Каждая запись должна содержать дату, категорию (доход/расход), сумму, описание (возможны дополнительные поля). СДЕЛАНО
 
 # Будет плюсом:
 # 1. Аннотации: Аннотирование функций и переменных в коде.
