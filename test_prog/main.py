@@ -1,32 +1,32 @@
 import json, datetime
 
-class WorkDB: ###
-    def __init__(self) -> None:
-        self.file_path = 'main.json'
+class WorkDB: 
+    def __init__(self, file_path='main.json') -> None:
+        self.file_path = file_path
         
-    def add_zap(self, new_data):
+    def add_note(self, new_data):
         with open(self.file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+            data=json.load(f)
         keys=list(data.keys())
-        second_key=keys[-1]
-        data[str(int(second_key) + 1)] = new_data
+        last_key=keys[-1]
+        data[str(int(last_key)+1)]=new_data
         if new_data['Категория'] == 'Доход':
             data['Баланс']+=new_data['Сумма']
         else:
             data['Баланс']-=new_data['Сумма']
         with open(self.file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
-            return 'Новая запись успешно добавлена'
+        return 'Новая запись успешно добавлена'
 
-    def bal(self):
+    def balance(self):
         with open(self.file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+            data=json.load(f)
         return data['Баланс']
 
-    def bal_kat(self, type):
-        result = 0
+    def bal_categ(self, type):
         with open(self.file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+            data=json.load(f)
+        result=0
         keys=list(data.keys())
         second_key=keys[-1]
         for i in range(1, int(second_key)+1):
@@ -38,28 +38,27 @@ class WorkDB: ###
                     result+=data[str(i)]['Сумма']
         return result
 
-    def red_zap(self, index, type, novoe):
+    def edit_entry(self, index, type, new):
         with open(self.file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+            data=json.load(f)
         if type == 'Сумма':
             if data[index]['Категория'] == 'Доход':
-                data['Баланс'] -= data[index]['Сумма']
+                data['Баланс']-=data[index]['Сумма']
             elif data[index]['Категория'] == 'Расход':
-                data['Баланс'] += data[index]['Сумма']
-
+                data['Баланс']+=data[index]['Сумма']
             if data[index]['Категория'] == 'Доход':
-                data['Баланс'] += novoe
+                data['Баланс']+=new
             elif data[index]['Категория'] == 'Расход':
-                data['Баланс'] -= novoe
-        data[index][type] = novoe
+                data['Баланс']-=new
+        data[index][type]=new
         with open(self.file_path, 'w', encoding='utf-8') as file:
             json.dump(data, file, ensure_ascii=False, indent=4)
-        return 'Вы успешно изменили запись'
+        return 'Запись успешно изменена'
 
-    def poisk(self, type, user_input):
-        result=''
+    def search(self, type, user_input):
         with open(self.file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+            data=json.load(f)
+        result=''
         keys=list(data.keys())
         second_key=keys[-1]
         for i in range(1, int(second_key)+1):
@@ -79,97 +78,97 @@ class WorkDB: ###
                 result+=f'\nНомер записи: {i}\nДата: {data[str(i)]["Дата"]}\nКатегория: {data[str(i)]["Категория"]}\nСумма: {data[str(i)]["Сумма"]}\nОписание: {data[str(i)]["Описание"]}\n'
         return result
 
-    def udal(self, index):
+    def delete(self, index):
         with open(self.file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
+            data=json.load(file)
         if data[index]['Категория'] == 'Доход':
-                data['Баланс'] -= data[index]['Сумма']
+                data['Баланс']-=data[index]['Сумма']
         elif data[index]['Категория'] == 'Расход':
-            data['Баланс'] += data[index]['Сумма']
+            data['Баланс']+=data[index]['Сумма']
         if index in data:
             del data[index]
-        new_data = {}
-        new_data["Баланс"] = data.pop("Баланс", 0)
-        index = 0
+        new_data={}
+        new_data["Баланс"]=data.pop("Баланс", 0)
+        index=0
         for key, value in data.items():
-            new_data[str(index)] = value
-            index += 1
+            new_data[str(index)]=value
+            index+=1
         with open(self.file_path, 'w', encoding='utf-8') as file:
             json.dump(new_data, file, ensure_ascii=False, indent=4)
         return 'Запись успешно удалена'
 
-class Main:
-    def __init__(self): ## Добавить списки для каждого действия
-        self.actions = ['1', '2', '3', '4', '1.', '2.', '3.', '4.', 'вывод баланса', 'добавление записи', 'редактирование записи', 'поиск по записям']
-        self.actions_1 = ['1', '1.', 'вывод баланса']
-        self.actions_1_1 = ['1', '1.', 'баланс']
-        self.actions_1_2 = ['2', '2.', 'доход']
-        self.actions_1_3 = ['3', '3.', 'расход']
-        self.actions_2 = ['2', '2.', 'добавление записи']
-        self.actions_2_1 = ['1', '1.', 'доход']
-        self.actions_2_2 = ['2', '2.', 'расход']        
-        self.actions_3 = ['3', '3.', 'редактирование записи']
-        self.actions_3_1 = ['1', '1.', 'редактировать']
-        self.actions_3_1_1 = ['1', '1.', 'дата']
-        self.actions_3_1_2 = ['2', '2.', 'категория']
-        self.actions_3_1_2_1 = ['1', '1.', 'доход']
-        self.actions_3_1_2_2 = ['2', '2.', 'расход']
-        self.actions_3_1_3 = ['3', '3.', 'сумма']
-        self.actions_3_1_4 = ['4', '4.', 'описание']
-        self.actions_3_2 = ['2', '2.', 'удалить']
-        self.actions_4 = ['4', '4.', 'поиск по записям']
-        self.actions_4_1 = ['1', '1.', 'доход']
-        self.actions_4_2 = ['2', '2.', 'расход']
-        self.actions_4_3 = ['3', '3.', 'дата']
-        self.actions_4_4 = ['4', '4.', 'сумма']
-        self.add_zap = {
+class Application: #
+    def __init__(self):
+        self.actions=['1', '2', '3', '4', '1.', '2.', '3.', '4.', 'вывод баланса', 'добавление записи', 'редактирование записи', 'поиск по записям']
+        self.actions_1=['1', '1.', 'вывод баланса', 'бал', 'баланс']
+        self.actions_1_1=['1', '1.', 'бал', 'баланс']
+        self.actions_1_2=['2', '2.', 'доход']
+        self.actions_1_3=['3', '3.', 'расход']
+        self.actions_2=['2', '2.', 'добавление записи']
+        self.actions_2_1=['1', '1.', 'доход']
+        self.actions_2_2=['2', '2.', 'расход']        
+        self.actions_3=['3', '3.', 'ред', 'редактировать', 'редактировать запись', 'редактирование записи']
+        self.actions_3_1=['1', '1.', 'ред', 'редактировать']
+        self.actions_3_1_1=['1', '1.', 'дата']
+        self.actions_3_1_2=['2', '2.', 'кат', 'категория']
+        self.actions_3_1_2_1=['1', '1.', 'доход']
+        self.actions_3_1_2_2=['2', '2.', 'расход']
+        self.actions_3_1_3=['3', '3.', 'сумма']
+        self.actions_3_1_4=['4', '4.', 'описание']
+        self.actions_3_2=['2', '2.', 'удалить']
+        self.actions_4=['4', '4.', 'поиск', 'поиск по записям']
+        self.actions_4_1=['1', '1.', 'доход']
+        self.actions_4_2=['2', '2.', 'расход']
+        self.actions_4_3=['3', '3.', 'дата']
+        self.actions_4_4=['4', '4.', 'сумма']
+        self.add_note={
                 'Дата': '',
                 'Категория': '',
-                'Сумма': '',
+                'Сумма': 0,
                 'Описание': ''                
             }
 
-    def main(self, deytv): ###
-        work_db = WorkDB()
+    def main(self, deytv): #
+        work_db=WorkDB()
         if deytv in self.actions_1:
-            user_input = input('Выберите действие (укажите номер или само действие):\n1. Баланс\n2. Доход\n3. Расход\n> ').lower()
+            user_input=input('Выберите действие (укажите номер или само действие):\n1. Баланс\n2. Доход\n3. Расход\n> ').lower()
             if user_input in self.actions_1_1:
-                result = work_db.bal()
+                result=work_db.balance()
                 return f'Ваш балланс равен: {result}'
             elif user_input in self.actions_1_2:
-                result = work_db.bal_kat('доход')
+                result = work_db.bal_categ('доход')
                 return f'Ваш доход за всё время: {result}'
             elif user_input in self.actions_1_3:
-                result = work_db.bal_kat('расход')
+                result = work_db.bal_categ('расход')
                 return f'Ваши расходы за всё время: {result}'
 
         elif deytv in self.actions_2:
             user_input = input('Выберите категорию записи (укажите номер или саму категорию):\n1. Доход\n2. Расход\n> ')
             if user_input.lower() in self.actions_2_1:
-                self.add_zap['Категория'] = 'Доход'
+                self.add_note['Категория'] = 'Доход'
             elif user_input.lower() in self.actions_2_2:
-                self.add_zap['Категория'] = 'Расход'
+                self.add_note['Категория'] = 'Расход'
             while True:
                 user_input = input('Введите сумму:\n> ')
                 try:
                     number = int(user_input)
-                    self.add_zap['Сумма'] = number
+                    self.add_note['Сумма'] = number
                     break
                 except ValueError:
                     try:
                         number = float(user_input)
-                        self.add_zap['Сумма'] = number
+                        self.add_note['Сумма'] = number
                         break
                     except ValueError:
                         print('Введите число')
-            self.add_zap['Описание'] = input('Введите описание:\n> ')
+            self.add_note['Описание'] = input('Введите описание:\n> ')
             today = datetime.date.today()
             formatted_date = today.strftime("%Y-%d-%m")
-            self.add_zap['Дата']=formatted_date
-            return work_db.add_zap(self.add_zap)
+            self.add_note['Дата']=formatted_date
+            return work_db.add_note(self.add_note)
         
         elif deytv in self.actions_3:
-            func_vivod = work_db.poisk('все', '')
+            func_vivod = work_db.search('все', '')
             user_input = input('Выберите действие:\n1. Редактировать\n2. Удалить\n> ').lower()
             print(f'Все ваши записи:\n{func_vivod}')
             if user_input in self.actions_3_1:
@@ -218,7 +217,7 @@ class Main:
                 elif user_input_type in self.actions_3_1_4:
                     user_input_type = 'Описание'
                     user_input_zap_now = input('Введите новое значение:\n>')
-                return work_db.red_zap(user_input_index, user_input_type, user_input_zap_now)
+                return work_db.edit_entry(user_input_index, user_input_type, user_input_zap_now)
             elif user_input in self.actions_3_2:
                 while True:
                     user_input = input('Укажите номер записи, которую надо удалить:\n> ')
@@ -228,15 +227,15 @@ class Main:
                             break
                     except ValueError:
                         print('Введите номер записи:\n> ')
-                return work_db.udal(user_input)
+                return work_db.delete(user_input)
 
         elif deytv in self.actions_4:
             user_input = input('Введите способ поиска записи:\n1. Доход\n2. Расход\n3. Дата\n4. Сумма\n> ').lower()
             if user_input in self.actions_4_1:
-                result = work_db.poisk('доход', '')
+                result = work_db.search('доход', '')
                 return result
             elif user_input in self.actions_4_2:
-                result = work_db.poisk('расход', '')
+                result = work_db.search('расход', '')
                 return result
             elif user_input in self.actions_4_3:
                 user_input = input('Введите дату в формате гггг-мм-дд\n> ')
@@ -246,30 +245,30 @@ class Main:
                         break
                     except ValueError:
                         print('Введите дату правильно')
-                result = work_db.poisk('дата', user_input)
+                result = work_db.search('дата', user_input)
                 return result
             elif user_input in self.actions_4_4:
                 while True:
                     user_input = input('Введите сумму:\n> ')
                     try:
                         float(user_input)
-                        self.add_zap['Сумма'] = user_input
+                        self.add_note['Сумма'] = user_input
                         break
                     except ValueError:
                         print('Введите число')
-                result = work_db.poisk('сумма', user_input)
+                result = work_db.search('сумма', user_input)
                 return result
 
     def run(self):
         while True:
-            user_input = input("Выберите действие (укажите номер или само действие):\n1. Вывод баланса\n2. Добавление записи\n3. Редактирование записи\n4. Поиск по записям\n> ").lower()
+            user_input=input("Выберите действие (укажите номер или само действие):\n1. Вывод баланса\n2. Добавление записи\n3. Редактирование записи\n4. Поиск по записям\n> ").lower()
             if user_input in self.actions:
                 print(self.main(user_input))
             else:
                 print('Что то пошло не так. Попробуйте ещё раз')    
 
 if __name__ == "__main__":
-    app = Main()
+    app = Application()
     app.run()
 
 # Тестовое задание: Разработка консольного приложения "Личный финансовый кошелек"
