@@ -1,5 +1,4 @@
-import json
-from datetime import date
+import json, datetime
 
 class WorkDB: ###
     def __init__(self) -> None:
@@ -11,6 +10,10 @@ class WorkDB: ###
         keys=list(data.keys())
         second_key=keys[-1]
         data[str(int(second_key) + 1)] = new_data
+        if new_data['Категория'] == 'Доход':
+            data['Баланс']+=new_data['Сумма']
+        else:
+            data['Баланс']-=new_data['Сумма']
         with open(self.file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
             return 'Новая запись успешно добавлена'
@@ -35,7 +38,7 @@ class WorkDB: ###
                     result+=data[str(i)]['Сумма']
         return result
 
-    def poisk(self, type):
+    def poisk(self, type, user_input):
         result=''
         with open(self.file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -48,6 +51,12 @@ class WorkDB: ###
             elif type == 'расход':
                 if data[str(i)]['Категория'] == 'Расход':
                     result+=f'\nНомер записи: {i}\nДата: {data[str(i)]["Дата"]}\nКатегория: {data[str(i)]["Категория"]}\nСумма: {data[str(i)]["Сумма"]}\nОписание: {data[str(i)]["Описание"]}\n'        
+            elif type == 'сумма':
+                if str(data[str(i)]['Сумма']) == user_input:
+                    result+=f'\nНомер записи: {i}\nДата: {data[str(i)]["Дата"]}\nКатегория: {data[str(i)]["Категория"]}\nСумма: {data[str(i)]["Сумма"]}\nОписание: {data[str(i)]["Описание"]}\n'                    
+            elif type == 'дата':
+                if str(data[str(i)]['Дата']) == user_input:
+                    result+=f'\nНомер записи: {i}\nДата: {data[str(i)]["Дата"]}\nКатегория: {data[str(i)]["Категория"]}\nСумма: {data[str(i)]["Сумма"]}\nОписание: {data[str(i)]["Описание"]}\n'
         return result
 
 class Main:
@@ -94,13 +103,20 @@ class Main:
             elif user_input.lower() in self.actions_2_2:
                 self.add_zap['Категория'] = 'Расход'
             while True:
+                user_input = input('Введите сумму:\n> ')
                 try:
-                    self.add_zap['Сумма'] = int(input('Введите сумму:\n> '))
+                    number = int(user_input)
+                    self.add_zap['Сумма'] = number
                     break
                 except ValueError:
-                    print('Введите число а не строку')
+                    try:
+                        number = float(user_input)
+                        self.add_zap['Сумма'] = number
+                        break
+                    except ValueError:
+                        print('Введите число')
             self.add_zap['Описание'] = input('Введите описание:\n> ')
-            today = date.today()
+            today = datetime.date.today()
             formatted_date = today.strftime("%Y-%d-%m")
             self.add_zap['Дата']=formatted_date
             return work_db.add_zap(self.add_zap)
@@ -111,15 +127,32 @@ class Main:
         elif deytv in self.actions_4:
             user_input = input('Введите способ поиска записи:\n1. Доход\n2. Расход\n3. Дата\n4. Сумма\n> ').lower()
             if user_input in self.actions_4_1:
-                result = work_db.poisk('доход')
+                result = work_db.poisk('доход', '')
                 return result
             elif user_input in self.actions_4_2:
-                result = work_db.poisk('расход')
+                result = work_db.poisk('расход', '')
                 return result
             elif user_input in self.actions_4_3:
-                pass
+                user_input = input('Введите дату в формате гггг-мм-дд\n> ')
+                while True:
+                    try:
+                        date = datetime.datetime.strptime(user_input, "%Y-%m-%d")
+                        break
+                    except ValueError:
+                        print('Введите дату правильно')
+                result = work_db.poisk('дата', user_input)
+                return result
             elif user_input in self.actions_4_4:
-                pass
+                while True:
+                    user_input = input('Введите сумму:\n> ')
+                    try:
+                        float(user_input)
+                        self.add_zap['Сумма'] = user_input
+                        break
+                    except ValueError:
+                        print('Введите число')
+                result = work_db.poisk('сумма', user_input)
+                return result
 
     def run(self):
         while True:
@@ -141,7 +174,7 @@ if __name__ == "__main__":
 # 1. Вывод баланса: Показать текущий баланс, а также отдельно доходы и расходы. СДЕЛАНО
 # 2. Добавление записи: Возможность добавления новой записи о доходе или расходе. СДЕЛАНО
 # 3. Редактирование записи: Изменение существующих записей о доходах и расходах.
-# 4. Поиск по записям: Поиск записей по категории, дате или сумме.
+# 4. Поиск по записям: Поиск записей по категории, дате или сумме. СДЕЛАНО
 
 # Требования к программе:
 # 1. Интерфейс: Реализация через консоль (CLI), без использования веб- или графического интерфейса (также без использования фреймворков таких как Django, FastAPI, Flask  и тд).
