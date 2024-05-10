@@ -98,17 +98,17 @@
         }
     },    
     "Длительность раунда": {
-        "30": "False",
-        "40": "False",
-        "50": "False",
-        "60": "False",
-        "120": "False"
+        "30": false,
+        "40": false,
+        "50": false,
+        "60": false,
+        "120": false
     },
     "Количество очков для победы": {
-        "20": "False",
-        "30": "False",
-        "50": "False",
-        "60": "False",
-        "80": "False"
+        "20": false,
+        "30": false,
+        "50": false,
+        "60": false,
+        "80": false
     }
 }
