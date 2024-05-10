@@ -12,14 +12,180 @@ def main_str():
 def index2():
     return render_template('index2.html')
 
+@app.route('/setings')
+def set():
+    return render_template('index_3.html')
+
+@app.route('/save_set_1')
+def save_set_1():
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    if data["Длительность раунда"]["30"] == False:
+        data["Длительность раунда"]["30"]=True
+    else:
+        data["Длительность раунда"]["30"]=False
+    data["Длительность раунда"]["40"]=False
+    data["Длительность раунда"]["50"]=False
+    data["Длительность раунда"]["60"]=False
+    data["Длительность раунда"]["120"]=False
+    with open('session.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('index_3.html')
+
+@app.route('/save_set_2')
+def save_set_2():
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    if data["Длительность раунда"]["40"] == False:
+        data["Длительность раунда"]["40"]=True
+    else:
+        data["Длительность раунда"]["40"]=False
+    data["Длительность раунда"]["30"]=False
+    data["Длительность раунда"]["50"]=False
+    data["Длительность раунда"]["60"]=False
+    data["Длительность раунда"]["120"]=False
+    with open('session.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('index_3.html')
+
+@app.route('/save_set_3')
+def save_set_3():
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    if data["Длительность раунда"]["50"] == False:
+        data["Длительность раунда"]["50"]=True
+    else:
+        data["Длительность раунда"]["50"]=False
+    data["Длительность раунда"]["40"]=False
+    data["Длительность раунда"]["30"]=False
+    data["Длительность раунда"]["60"]=False
+    data["Длительность раунда"]["120"]=False
+    with open('session.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('index_3.html')
+
+@app.route('/save_set_4')
+def save_set_4():
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    if data["Длительность раунда"]["60"] == False:
+        data["Длительность раунда"]["60"]=True
+    else:
+        data["Длительность раунда"]["60"]=False
+    data["Длительность раунда"]["40"]=False
+    data["Длительность раунда"]["50"]=False
+    data["Длительность раунда"]["30"]=False
+    data["Длительность раунда"]["120"]=False
+    with open('session.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('index_3.html')
+
+@app.route('/save_set_5')
+def save_set_5():
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    if data["Длительность раунда"]["120"] == False:
+        data["Длительность раунда"]["120"]=True
+    else:
+        data["Длительность раунда"]["120"]=False
+    data["Длительность раунда"]["40"]=False
+    data["Длительность раунда"]["50"]=False
+    data["Длительность раунда"]["60"]=False
+    data["Длительность раунда"]["30"]=False
+    with open('session.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('index_3.html')
+
+@app.route('/save_set_6')
+def save_set_6():
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    if data["Количество очков для победы"]["20"] == False:
+        data["Количество очков для победы"]["20"]=True
+    else:
+        data["Количество очков для победы"]["20"]=False
+    data["Количество очков для победы"]["30"]=False
+    data["Количество очков для победы"]["50"]=False
+    data["Количество очков для победы"]["60"]=False
+    data["Количество очков для победы"]["80"]=False
+    with open('session.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('index_3.html')
+
+@app.route('/save_set_7')
+def save_set_7():
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    if data["Количество очков для победы"]["30"] == False:
+        data["Количество очков для победы"]["30"]=True
+    else:
+        data["Количество очков для победы"]["30"]=False
+    data["Количество очков для победы"]["20"]=False
+    data["Количество очков для победы"]["50"]=False
+    data["Количество очков для победы"]["60"]=False
+    data["Количество очков для победы"]["80"]=False
+    with open('session.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('index_3.html')
+
+
+@app.route('/save_set_8')
+def save_set_8():
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    if data["Количество очков для победы"]["50"] == False:
+        data["Количество очков для победы"]["50"]=True
+    else:
+        data["Количество очков для победы"]["50"]=False
+    data["Количество очков для победы"]["30"]=False
+    data["Количество очков для победы"]["20"]=False
+    data["Количество очков для победы"]["60"]=False
+    data["Количество очков для победы"]["80"]=False
+    with open('session.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('index_3.html')
+
+
+@app.route('/save_set_9')
+def save_set_9():
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    if data["Количество очков для победы"]["60"] == False:
+        data["Количество очков для победы"]["60"]=True
+    else:
+        data["Количество очков для победы"]["60"]=False
+    data["Количество очков для победы"]["30"]=False
+    data["Количество очков для победы"]["50"]=False
+    data["Количество очков для победы"]["20"]=False
+    data["Количество очков для победы"]["80"]=False
+    with open('session.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('index_3.html')
+
+@app.route('/save_set_10')
+def save_set_10():
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    if data["Количество очков для победы"]["80"] == False:
+        data["Количество очков для победы"]["80"]=True
+    else:
+        data["Количество очков для победы"]["80"]=False
+    data["Количество очков для победы"]["30"]=False
+    data["Количество очков для победы"]["50"]=False
+    data["Количество очков для победы"]["60"]=False
+    data["Количество очков для победы"]["20"]=False
+    with open('session.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('index_3.html')
+
 @app.route('/save')
 def save():
     return render_template('index.html')
 
 @app.route('/save_text_1')
-def save_tex_1t():
+def save_tex_1():
     with open('session.json', 'r', encoding='utf-8') as f:
-            data=json.load(f)
+        data=json.load(f)
     if data["Категория"]["Базовый набор"] == True:
         data["Категория"]["Базовый набор"]=False
     else:
@@ -31,7 +197,7 @@ def save_tex_1t():
 @app.route('/save_text_2')
 def save_text_2():
     with open('session.json', 'r', encoding='utf-8') as f:
-            data=json.load(f)
+        data=json.load(f)
     if data["Категория"]["IT"] == True:
         data["Категория"]["IT"]=False
     else:
@@ -43,7 +209,7 @@ def save_text_2():
 @app.route('/save_text_3')
 def save_text_3():
     with open('session.json', 'r', encoding='utf-8') as f:
-            data=json.load(f)
+        data=json.load(f)
     if data["Категория"]["Юриспруденция"] == True:
         data["Категория"]["Юриспруденция"]=False
     else:
@@ -55,7 +221,7 @@ def save_text_3():
 @app.route('/save_text_4')
 def save_text_4():
     with open('session.json', 'r', encoding='utf-8') as f:
-            data=json.load(f)
+        data=json.load(f)
     if data["Категория"]["Новый год"] == True:
         data["Категория"]["Новый год"]=False
     else:
@@ -67,7 +233,7 @@ def save_text_4():
 @app.route('/save_text_5')
 def save_text_5():
     with open('session.json', 'r', encoding='utf-8') as f:
-            data=json.load(f)
+        data=json.load(f)
     if data["Категория"]["Marvel"] == True:
         data["Категория"]["Marvel"]=False
     else:
@@ -79,7 +245,7 @@ def save_text_5():
 @app.route('/save_text_6')
 def save_text_6():
     with open('session.json', 'r', encoding='utf-8') as f:
-            data=json.load(f)
+        data=json.load(f)
     if data["Категория"]["Природа"] == True:
         data["Категория"]["Природа"]=False
     else:
@@ -91,7 +257,7 @@ def save_text_6():
 @app.route('/save_text_7')
 def save_text_7():
     with open('session.json', 'r', encoding='utf-8') as f:
-            data=json.load(f)
+        data=json.load(f)
     if data["Категория"]["Еда"] == True:
         data["Категория"]["Еда"]=False
     else:
@@ -103,7 +269,7 @@ def save_text_7():
 @app.route('/save_text_8')
 def save_text_8():
     with open('session.json', 'r', encoding='utf-8') as f:
-            data=json.load(f)
+        data=json.load(f)
     if data["Категория"]["Фильмы"] == True:
         data["Категория"]["Фильмы"]=False
     else:
@@ -115,7 +281,7 @@ def save_text_8():
 @app.route('/save_text_9') ###
 def save_text_9():
     with open('session.json', 'r', encoding='utf-8') as f:
-            data=json.load(f)
+        data=json.load(f)
     if data["Категория"]["Свой выбор"]["Статус"] == True:
         data["Категория"]["Свой выбор"]["Статус"]=False
     else:
