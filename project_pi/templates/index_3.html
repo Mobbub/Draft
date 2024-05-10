@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Выбор категории</title>
+    <style>
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        button.pressed {
+            background-color: #ddd;
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+<h1>Нажмите на кнопку для сохранения длительности раунда:</h1>
+<button id='btn1'>30</button>
+<button id='btn2'>40</button>
+<button id='btn3'>50</button>
+<button id='btn4'>60</button>
+<button id='btn5'>120</button>
+
+<h1>Нажмите на кнопку для сохранения количество очков для победы:</h1>
+<button id='btn6'>20</button>
+<button id='btn7'>30</button>
+<button id='btn8'>50</button>
+<button id='btn9'>60</button>
+<button id='btn10'>80</button>
+
+<script>
+document.getElementById("btn1").addEventListener("click", function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/save_set_1", true);
+    xhr.send();
+});
+</script>
+
+<script>
+document.getElementById('btn2').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/save_set_2', true);
+    xhr.send();
+});
+</script>
+
+<script>
+document.getElementById('btn3').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/save_set_3', true);
+    xhr.send();
+});
+</script>
+
+<script>
+document.getElementById('btn4').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/save_set_4', true);
+    xhr.send();
+});
+</script>
+
+<script>
+document.getElementById('btn5').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/save_set_5', true);
+    xhr.send();
+});
+</script>
+
+<script>
+document.getElementById('btn6').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/save_set_6', true);
+    xhr.send();
+});
+</script>
+
+<script>
+document.getElementById('btn7').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/save_set_7', true);
+    xhr.send();
+});
+</script>
+
+<script>
+document.getElementById('btn8').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/save_set_8', true);
+    xhr.send();
+});
+</script>
+
+<script>
+document.getElementById('btn9').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/save_set_9', true);
+    xhr.send();
+});
+</script>
+
+<script>
+document.getElementById('btn10').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/save_set_10', true);
+    xhr.send();
+});
+</script>
+
+<div class="buttons">
+    <div class="back-h">
+        <a href="next" class="back">Назад</a>
+    </div>
+    <div class="next-h">
+        <a href="save" class="next">Дальше</a>
+    </div>
+</div>
+</body>
+</html>
