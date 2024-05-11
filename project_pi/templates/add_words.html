@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавление слов</title>
+</head>
+<body>
+    <h1>Добавление слов</h1>
+
+    <form method="post">
+        <input type="text" name="new_word" placeholder="Добавить новое слово">
+        <button type="submit">Добавить слово</button>
+    </form>
+
+    <h2>Слова:</h2>
+    <ul>
+        {% for word in words %}
+        <li>{{ word }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
