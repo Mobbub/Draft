@@ -17,7 +17,7 @@
     </style>
 </head>
 <body>
-<h1>Нажмите на кнопку для сохранения текста в файле:</h1>
+<h1>Нажмите на кнопку для сохранения наборов:</h1>
 <button id='btn1'>Базовый набор</button>
 <button id='btn2'>IT</button>
 <button id='btn3'>Юриспруденция</button>
@@ -26,7 +26,13 @@
 <button id='btn6'>Природа</button>
 <button id='btn7'>Еда</button>
 <button id='btn8'>Фильмы</button>
-<button id='btn9'>Свой набор</button>
+<button onclick="redirectToHandler()">Свой набор</button>
+
+<script>
+function redirectToHandler() {
+  window.location.href = "/save_text_9";
+}
+</script>
 
 <script>
 document.getElementById("btn1").addEventListener("click", function() {
@@ -92,17 +98,9 @@ document.getElementById('btn8').addEventListener('click', function() {
 });
 </script>
 
-<script>
-document.getElementById('btn9').addEventListener('click', function() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/save_text_9', true);
-    xhr.send();
-});
-</script>
-
 <div class="buttons">
     <div class="back-h">
-        <a href="/" class="back">Назад</a>
+        <a href="setings" class="back">Назад</a>
     </div>
     <div class="next-h">
         <a href="game" class="next">Дальше</a>
