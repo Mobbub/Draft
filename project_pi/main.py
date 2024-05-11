@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request
 import json
 
@@ -278,17 +277,23 @@ def save_text_8():
         json.dump(data, f, ensure_ascii=False, indent=4)
     return render_template('index.html')
 
-@app.route('/save_text_9') ###
+@app.route('/save_text_9', methods=['GET', 'POST']) ###
 def save_text_9():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Категория"]["Свой выбор"]["Статус"] == True:
-        data["Категория"]["Свой выбор"]["Статус"]=False
-    else:
-        data['Категория']["Свой выбор"]["Статус"]=True
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
-    return render_template('index.html')
+    if request.method == 'POST':
+        words=[]
+        new_word = request.form['new_word']
+        with open('session.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        for i in range(15):
+            if not data["Категория"]["Свой набор"]["Слова"][str(i)]:
+                data["Категория"]["Свой набор"]["Слова"][str(i)]=new_word
+                break
+        for j in range(1, 15):
+            if data["Категория"]["Свой набор"]["Слова"][str(i)]:
+                words.append(data["Категория"]["Свой набор"]["Слова"][str(j)])
+        with open('session.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('add_words.html', words=words)
 
 @app.route('/game') ###
 def game():
