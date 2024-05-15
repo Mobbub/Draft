@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/glav2.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Luxurious+Roman&family=Russo+One&display=swap" rel="stylesheet">
+  <link href="https://db.onlinewebfonts.com/c/c455d94eee43dc4ceeb83c0c0fd0d4c8?family=Segoe+Print+V1" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Luxurious+Roman&family=Russo+One&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="header">
+  <div class="container">
+    <div class="headerline">
+        <div class="nazv">
+          Выберите команду
+        </div>
+      </div>
+    </div>
+</div>
+<div class="headerdown">
+    <div class="images">
+        <img src="C:\Users\User\Desktop\программирование\project_pi\templates\Ellipse_18.png" width="200" height="200" alt="">
+        <img src="C:\Users\User\Desktop\программирование\project_pi\templates\Ellipse_16.png" width="200" height="200" alt="">
+        <img src="C:\Users\User\Desktop\программирование\project_pi\templates\Ellipse_15.png" width="200" height="200" alt="">
+        <img src="C:\Users\User\Desktop\программирование\project_pi\templates\Ellipse_17.png" width="200" height="200" alt="">
+        
+    </div>
+    <div class="commands">
+      <form method="post">
+        <input type="text" name="team_1" value="{{ team_1 }}" placeholder="Введите название команды">
+        <input type="text" name="team_2" value="{{ team_2 }}" placeholder="Введите название команды">
+        <input type="text" name="team_3" value="{{ team_3 }}" placeholder="Введите название команды">
+        <input type="text" name="team_4" value="{{ team_4 }}" placeholder="Введите название команды">
+        <input type="text" name="team_5" value="{{ team_5 }}" placeholder="Введите название команды">
+        <button class="btnreset btnforms" type="submit">Дальше</button>
+      </form>
+    </div>
+</div>
+
+<div class="buttons">
+    <div class="back-h">
+        <a href="/" class="back">Назад</a>
+    </div>
+</div>
+</body>
+</html>
