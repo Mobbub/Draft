@@ -8,9 +8,57 @@ app.static_folder = 'static'
 def main_str():
     return render_template('main_str.html')
 
-@app.route('/next')
+@app.route('/next', methods=['GET', 'POST'])
 def index2():
-    return render_template('index2.html')
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    team_1 = data["Команды"]["1"]["Название"]
+    team_2 = data["Команды"]["2"]["Название"]
+    team_3 = data["Команды"]["3"]["Название"]
+    team_4 = data["Команды"]["4"]["Название"]
+    team_5 = data["Команды"]["5"]["Название"]
+    if request.method == 'POST':
+        with open('session.json', 'r', encoding='utf-8') as f:
+            data=json.load(f)
+        teams_1 = request.form['team_1']
+        teams_2 = request.form['team_2']
+        teams_3 = request.form['team_3']
+        teams_4 = request.form['team_4']
+        teams_5 = request.form['team_5']
+        if teams_1:
+            data["Команды"]["1"]["Статус"]=True
+            data["Команды"]["1"]["Название"]=teams_1
+        else:
+            data["Команды"]["1"]["Статус"]=False
+            data["Команды"]["1"]["Название"]=''
+        if teams_2:
+            data["Команды"]["2"]["Статус"]=True
+            data["Команды"]["2"]["Название"]=teams_2
+        else:
+            data["Команды"]["2"]["Статус"]=False
+            data["Команды"]["2"]["Название"]=''
+        if teams_3:
+            data["Команды"]["3"]["Статус"]=True
+            data["Команды"]["3"]["Название"]=teams_3
+        else:
+            data["Команды"]["3"]["Статус"]=False
+            data["Команды"]["3"]["Название"]=''
+        if teams_4:
+            data["Команды"]["4"]["Статус"]=True
+            data["Команды"]["4"]["Название"]=teams_4
+        else:
+            data["Команды"]["4"]["Статус"]=False
+            data["Команды"]["4"]["Название"]=''
+        if teams_5:
+            data["Команды"]["5"]["Статус"]=True
+            data["Команды"]["5"]["Название"]=teams_5
+        else:
+            data["Команды"]["5"]["Статус"]=False
+            data["Команды"]["5"]["Название"]=''
+        with open('session.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+        return render_template('index_3.html')
+    return render_template('index2.html', team_1 = team_1, team_2 = team_2, team_3 = team_3, team_4 = team_4, team_5 = team_5)
 
 @app.route('/setings')
 def set():
