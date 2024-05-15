@@ -26,7 +26,8 @@
 <button id='btn6'>Природа</button>
 <button id='btn7'>Еда</button>
 <button id='btn8'>Фильмы</button>
-<button onclick="redirectToHandler()">Свой набор</button>
+<button id='btn9'>Свой набор</button>
+<button onclick="redirectToHandler()">Настройки свой набор</button>
 
 <script>
 function redirectToHandler() {
@@ -96,6 +97,16 @@ document.getElementById('btn8').addEventListener('click', function() {
     xhr.open('GET', '/save_text_8', true);
     xhr.send();
 });
+</script>
+
+<script>
+    document.getElementById('btn9').addEventListener('click', function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/save_text_10', true);
+        xhr.send();
+});
+</script>
+
 </script>
 
 <div class="buttons">
