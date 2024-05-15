@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 import json
 
 app = Flask(__name__)
+app.static_folder = 'static'
 
 @app.route('/')
 def main_str():
@@ -277,10 +278,22 @@ def save_text_8():
         json.dump(data, f, ensure_ascii=False, indent=4)
     return render_template('index.html')
 
+@app.route('/save_text_10')
+def save_text_10():
+    with open('session.json', 'r', encoding='utf-8') as f:
+        data=json.load(f)
+    if data["Категория"]["Свой набор"]["Статус"] == True:
+        data["Категория"]["Свой набор"]["Статус"]=False
+    else:
+        data['Категория']["Свой набор"]["Статус"]=True
+    with open('session.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    return render_template('index.html')
+
 @app.route('/save_text_9', methods=['GET', 'POST']) ###
 def save_text_9():
+    words=[]
     if request.method == 'POST':
-        words=[]
         new_word = request.form['new_word']
         with open('session.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
