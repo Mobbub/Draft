@@ -2,12 +2,30 @@
 <html>
 <head>
     <title>Добавление слов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: left;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+        li {
+            background-color: #f2f2f2;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
     <h1>Добавление слов</h1>
 
     <form method="post">
-        <input type="text" name="new_word" placeholder="Вводи новые слова">
+        <input type="text" name="word" placeholder="Вводи новые слова">
         <button type="submit">Добавить слово</button>
     </form>
 
