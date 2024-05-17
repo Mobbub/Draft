@@ -1,62 +1,183 @@
-from flask import Flask, render_template, request
-import json
+from flask import Flask, render_template, request, session
+import json, uuid, os
 
 app = Flask(__name__)
-app.static_folder = 'static'
+app.secret_key = os.environ.get('SECRET_KEY') or 'default_secret_key'
+user_data = {}
 
-@app.route('/')
+def generate_session_id():
+    return str(uuid.uuid4())
+
+def prov_nast():
+    user_data_for_session = user_data.get(session['session_id'], {})
+    slov_kom = user_data_for_session['Команды']
+    slov_dl = user_data_for_session['Длительность раунда']
+    slov_kl = user_data_for_session['Количество очков для победы']
+    a = 0
+    shet_kom = 0
+    shet_dl_rau = 0
+    shet_kl_och = 0
+    
+    for key, value in slov_kom.items():
+        if slov_kom[key]['Статус'] == True:
+            shet_kom+=1
+    if shet_kom>1:
+        a+=1
+        shet_kom=0
+    else:
+        shet_kom=0
+        return 'кол-во команд'
+    
+    for key, value in slov_dl.items():
+        if slov_dl[key] == True:
+            shet_dl_rau+=1
+    if shet_dl_rau == 1:
+        a+=1
+        shet_dl_rau=0
+    else:
+        shet_dl_rau=0
+        return 'дл раунда'
+    
+    for key, value in slov_kl.items():
+        if slov_kl[key] == True:
+            shet_kl_och+=1
+    if shet_kl_och == 1:
+        a+=1
+        shet_kl_och=0
+    else:
+        shet_kl_och=0
+        return 'кол-во оч'
+    
+    if a == 3:
+        return True
+    return False
+    
+@app.route('/', methods=['GET', 'POST'])
 def main_str():
+    session.clear()
+    session_id = session.get('session_id', None)
+    print(session)
+    print(session_id)
+    if session_id is None:
+        session['session_id'] = generate_session_id()
+        user_data[session['session_id']] = {
+                "Категория": {
+                "Базовый набор": False,
+                "IT": False,
+                "Юриспруденция": False,
+                "Новый год": False,
+                "Marvel": False,
+                "Природа": False,
+                "Еда": False,
+                "Фильмы": False,
+                "Свой набор": {
+                    "Статус": False,
+                    "Слова": {
+                        "0": "Слова",
+                        "1": '',
+                        "2": '',
+                        "3": '',
+                        "4": '',
+                        "5": '',
+                        "6": '',
+                        "7": '',
+                        "8": '',
+                        "9": '',
+                        "10": '',
+                        "11": '',
+                        "12": '',
+                        "13": '',
+                        "14": ''
+                    }
+                }
+            },
+            "Длительность раунда": {
+                "30": False,
+                "40": False,
+                "50": False,
+                "60": False,
+                "120": False
+            },
+            "Количество очков для победы": {
+                "20": False,
+                "30": False,
+                "50": False,
+                "60": False,
+                "80": False
+            },
+            "Команды": {
+                "1": {
+                    "Статус": False,
+                    "Название": ''
+                },
+                "2": {
+                    "Статус": False,
+                    "Название": ''
+                },
+                "3": {
+                    "Статус": False,
+                    "Название": ''
+                },
+                "4": {
+                    "Статус": False,
+                    "Название": ''
+                },
+                "5": {
+                    "Статус": False,
+                    "Название": ''
+                }
+            }
+        }
+    user_data_for_session = user_data.get(session['session_id'], {})
+    print(session)
+    print(session_id)
+    print(user_data_for_session)
     return render_template('main_str.html')
 
 @app.route('/next', methods=['GET', 'POST'])
 def index2():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    team_1 = data["Команды"]["1"]["Название"]
-    team_2 = data["Команды"]["2"]["Название"]
-    team_3 = data["Команды"]["3"]["Название"]
-    team_4 = data["Команды"]["4"]["Название"]
-    team_5 = data["Команды"]["5"]["Название"]
+    user_data_for_session = user_data.get(session['session_id'], {})
+    team_1 = user_data_for_session["Команды"]["1"]["Название"]
+    team_2 = user_data_for_session["Команды"]["2"]["Название"]
+    team_3 = user_data_for_session["Команды"]["3"]["Название"]
+    team_4 = user_data_for_session["Команды"]["4"]["Название"]
+    team_5 = user_data_for_session["Команды"]["5"]["Название"]
     if request.method == 'POST':
-        with open('session.json', 'r', encoding='utf-8') as f:
-            data=json.load(f)
         teams_1 = request.form['team_1']
         teams_2 = request.form['team_2']
         teams_3 = request.form['team_3']
         teams_4 = request.form['team_4']
         teams_5 = request.form['team_5']
         if teams_1:
-            data["Команды"]["1"]["Статус"]=True
-            data["Команды"]["1"]["Название"]=teams_1
+            user_data_for_session["Команды"]["1"]["Статус"]=True
+            user_data_for_session["Команды"]["1"]["Название"]=teams_1
         else:
-            data["Команды"]["1"]["Статус"]=False
-            data["Команды"]["1"]["Название"]=''
+            user_data_for_session["Команды"]["1"]["Статус"]=False
+            user_data_for_session["Команды"]["1"]["Название"]=''
         if teams_2:
-            data["Команды"]["2"]["Статус"]=True
-            data["Команды"]["2"]["Название"]=teams_2
+            user_data_for_session["Команды"]["2"]["Статус"]=True
+            user_data_for_session["Команды"]["2"]["Название"]=teams_2
         else:
-            data["Команды"]["2"]["Статус"]=False
-            data["Команды"]["2"]["Название"]=''
+            user_data_for_session["Команды"]["2"]["Статус"]=False
+            user_data_for_session["Команды"]["2"]["Название"]=''
         if teams_3:
-            data["Команды"]["3"]["Статус"]=True
-            data["Команды"]["3"]["Название"]=teams_3
+            user_data_for_session["Команды"]["3"]["Статус"]=True
+            user_data_for_session["Команды"]["3"]["Название"]=teams_3
         else:
-            data["Команды"]["3"]["Статус"]=False
-            data["Команды"]["3"]["Название"]=''
+            user_data_for_session["Команды"]["3"]["Статус"]=False
+            user_data_for_session["Команды"]["3"]["Название"]=''
         if teams_4:
-            data["Команды"]["4"]["Статус"]=True
-            data["Команды"]["4"]["Название"]=teams_4
+            user_data_for_session["Команды"]["4"]["Статус"]=True
+            user_data_for_session["Команды"]["4"]["Название"]=teams_4
         else:
-            data["Команды"]["4"]["Статус"]=False
-            data["Команды"]["4"]["Название"]=''
+            user_data_for_session["Команды"]["4"]["Статус"]=False
+            user_data_for_session["Команды"]["4"]["Название"]=''
         if teams_5:
-            data["Команды"]["5"]["Статус"]=True
-            data["Команды"]["5"]["Название"]=teams_5
+            user_data_for_session["Команды"]["5"]["Статус"]=True
+            user_data_for_session["Команды"]["5"]["Название"]=teams_5
         else:
-            data["Команды"]["5"]["Статус"]=False
-            data["Команды"]["5"]["Название"]=''
-        with open('session.json', 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+            user_data_for_session["Команды"]["5"]["Статус"]=False
+            user_data_for_session["Команды"]["5"]["Название"]=''
         return render_template('index_3.html')
     return render_template('index2.html', team_1 = team_1, team_2 = team_2, team_3 = team_3, team_4 = team_4, team_5 = team_5)
 
@@ -66,164 +187,134 @@ def set():
 
 @app.route('/save_set_1')
 def save_set_1():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Длительность раунда"]["30"] == False:
-        data["Длительность раунда"]["30"]=True
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Длительность раунда"]["30"] == False:
+        user_data_for_session["Длительность раунда"]["30"]=True
     else:
-        data["Длительность раунда"]["30"]=False
-    data["Длительность раунда"]["40"]=False
-    data["Длительность раунда"]["50"]=False
-    data["Длительность раунда"]["60"]=False
-    data["Длительность раунда"]["120"]=False
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session["Длительность раунда"]["30"]=False
+    user_data_for_session["Длительность раунда"]["40"]=False
+    user_data_for_session["Длительность раунда"]["50"]=False
+    user_data_for_session["Длительность раунда"]["60"]=False
+    user_data_for_session["Длительность раунда"]["120"]=False
     return render_template('index_3.html')
 
 @app.route('/save_set_2')
 def save_set_2():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Длительность раунда"]["40"] == False:
-        data["Длительность раунда"]["40"]=True
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Длительность раунда"]["40"] == False:
+        user_data_for_session["Длительность раунда"]["40"]=True
     else:
-        data["Длительность раунда"]["40"]=False
-    data["Длительность раунда"]["30"]=False
-    data["Длительность раунда"]["50"]=False
-    data["Длительность раунда"]["60"]=False
-    data["Длительность раунда"]["120"]=False
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session["Длительность раунда"]["40"]=False
+    user_data_for_session["Длительность раунда"]["30"]=False
+    user_data_for_session["Длительность раунда"]["50"]=False
+    user_data_for_session["Длительность раунда"]["60"]=False
+    user_data_for_session["Длительность раунда"]["120"]=False
     return render_template('index_3.html')
 
 @app.route('/save_set_3')
 def save_set_3():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Длительность раунда"]["50"] == False:
-        data["Длительность раунда"]["50"]=True
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Длительность раунда"]["50"] == False:
+        user_data_for_session["Длительность раунда"]["50"]=True
     else:
-        data["Длительность раунда"]["50"]=False
-    data["Длительность раунда"]["40"]=False
-    data["Длительность раунда"]["30"]=False
-    data["Длительность раунда"]["60"]=False
-    data["Длительность раунда"]["120"]=False
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session["Длительность раунда"]["50"]=False
+    user_data_for_session["Длительность раунда"]["40"]=False
+    user_data_for_session["Длительность раунда"]["30"]=False
+    user_data_for_session["Длительность раунда"]["60"]=False
+    user_data_for_session["Длительность раунда"]["120"]=False
     return render_template('index_3.html')
 
 @app.route('/save_set_4')
 def save_set_4():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Длительность раунда"]["60"] == False:
-        data["Длительность раунда"]["60"]=True
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Длительность раунда"]["60"] == False:
+        user_data_for_session["Длительность раунда"]["60"]=True
     else:
-        data["Длительность раунда"]["60"]=False
-    data["Длительность раунда"]["40"]=False
-    data["Длительность раунда"]["50"]=False
-    data["Длительность раунда"]["30"]=False
-    data["Длительность раунда"]["120"]=False
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session["Длительность раунда"]["60"]=False
+    user_data_for_session["Длительность раунда"]["40"]=False
+    user_data_for_session["Длительность раунда"]["50"]=False
+    user_data_for_session["Длительность раунда"]["30"]=False
+    user_data_for_session["Длительность раунда"]["120"]=False
     return render_template('index_3.html')
 
 @app.route('/save_set_5')
 def save_set_5():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Длительность раунда"]["120"] == False:
-        data["Длительность раунда"]["120"]=True
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Длительность раунда"]["120"] == False:
+        user_data_for_session["Длительность раунда"]["120"]=True
     else:
-        data["Длительность раунда"]["120"]=False
-    data["Длительность раунда"]["40"]=False
-    data["Длительность раунда"]["50"]=False
-    data["Длительность раунда"]["60"]=False
-    data["Длительность раунда"]["30"]=False
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session["Длительность раунда"]["120"]=False
+    user_data_for_session["Длительность раунда"]["40"]=False
+    user_data_for_session["Длительность раунда"]["50"]=False
+    user_data_for_session["Длительность раунда"]["60"]=False
+    user_data_for_session["Длительность раунда"]["30"]=False
     return render_template('index_3.html')
 
 @app.route('/save_set_6')
 def save_set_6():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Количество очков для победы"]["20"] == False:
-        data["Количество очков для победы"]["20"]=True
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Количество очков для победы"]["20"] == False:
+        user_data_for_session["Количество очков для победы"]["20"]=True
     else:
-        data["Количество очков для победы"]["20"]=False
-    data["Количество очков для победы"]["30"]=False
-    data["Количество очков для победы"]["50"]=False
-    data["Количество очков для победы"]["60"]=False
-    data["Количество очков для победы"]["80"]=False
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session["Количество очков для победы"]["20"]=False
+    user_data_for_session["Количество очков для победы"]["30"]=False
+    user_data_for_session["Количество очков для победы"]["50"]=False
+    user_data_for_session["Количество очков для победы"]["60"]=False
+    user_data_for_session["Количество очков для победы"]["80"]=False
     return render_template('index_3.html')
 
 @app.route('/save_set_7')
 def save_set_7():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Количество очков для победы"]["30"] == False:
-        data["Количество очков для победы"]["30"]=True
+    user_data_for_session = user_data.get(session['session_id'], {})    
+    if user_data_for_session["Количество очков для победы"]["30"] == False:
+        user_data_for_session["Количество очков для победы"]["30"]=True
     else:
-        data["Количество очков для победы"]["30"]=False
-    data["Количество очков для победы"]["20"]=False
-    data["Количество очков для победы"]["50"]=False
-    data["Количество очков для победы"]["60"]=False
-    data["Количество очков для победы"]["80"]=False
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session["Количество очков для победы"]["30"]=False
+    user_data_for_session["Количество очков для победы"]["20"]=False
+    user_data_for_session["Количество очков для победы"]["50"]=False
+    user_data_for_session["Количество очков для победы"]["60"]=False
+    user_data_for_session["Количество очков для победы"]["80"]=False
     return render_template('index_3.html')
 
 
 @app.route('/save_set_8')
 def save_set_8():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Количество очков для победы"]["50"] == False:
-        data["Количество очков для победы"]["50"]=True
+    user_data_for_session = user_data.get(session['session_id'], {})    
+    if user_data_for_session["Количество очков для победы"]["50"] == False:
+        user_data_for_session["Количество очков для победы"]["50"]=True
     else:
-        data["Количество очков для победы"]["50"]=False
-    data["Количество очков для победы"]["30"]=False
-    data["Количество очков для победы"]["20"]=False
-    data["Количество очков для победы"]["60"]=False
-    data["Количество очков для победы"]["80"]=False
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session["Количество очков для победы"]["50"]=False
+    user_data_for_session["Количество очков для победы"]["30"]=False
+    user_data_for_session["Количество очков для победы"]["20"]=False
+    user_data_for_session["Количество очков для победы"]["60"]=False
+    user_data_for_session["Количество очков для победы"]["80"]=False
     return render_template('index_3.html')
 
 
 @app.route('/save_set_9')
 def save_set_9():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Количество очков для победы"]["60"] == False:
-        data["Количество очков для победы"]["60"]=True
+    user_data_for_session = user_data.get(session['session_id'], {})    
+    if user_data_for_session["Количество очков для победы"]["60"] == False:
+        user_data_for_session["Количество очков для победы"]["60"]=True
     else:
-        data["Количество очков для победы"]["60"]=False
-    data["Количество очков для победы"]["30"]=False
-    data["Количество очков для победы"]["50"]=False
-    data["Количество очков для победы"]["20"]=False
-    data["Количество очков для победы"]["80"]=False
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session["Количество очков для победы"]["60"]=False
+    user_data_for_session["Количество очков для победы"]["30"]=False
+    user_data_for_session["Количество очков для победы"]["50"]=False
+    user_data_for_session["Количество очков для победы"]["20"]=False
+    user_data_for_session["Количество очков для победы"]["80"]=False
     return render_template('index_3.html')
 
 @app.route('/save_set_10')
 def save_set_10():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Количество очков для победы"]["80"] == False:
-        data["Количество очков для победы"]["80"]=True
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Количество очков для победы"]["80"] == False:
+        user_data_for_session["Количество очков для победы"]["80"]=True
     else:
-        data["Количество очков для победы"]["80"]=False
-    data["Количество очков для победы"]["30"]=False
-    data["Количество очков для победы"]["50"]=False
-    data["Количество очков для победы"]["60"]=False
-    data["Количество очков для победы"]["20"]=False
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session["Количество очков для победы"]["80"]=False
+    user_data_for_session["Количество очков для победы"]["30"]=False
+    user_data_for_session["Количество очков для победы"]["50"]=False
+    user_data_for_session["Количество очков для победы"]["60"]=False
+    user_data_for_session["Количество очков для победы"]["20"]=False
     return render_template('index_3.html')
 
 @app.route('/save')
@@ -232,133 +323,111 @@ def save():
 
 @app.route('/save_text_1')
 def save_tex_1():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Категория"]["Базовый набор"] == True:
-        data["Категория"]["Базовый набор"]=False
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Категория"]["Базовый набор"] == True:
+        user_data_for_session["Категория"]["Базовый набор"]=False
     else:
-        data['Категория']["Базовый набор"]=True
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session['Категория']["Базовый набор"]=True
     return render_template('index.html')
 
 @app.route('/save_text_2')
 def save_text_2():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Категория"]["IT"] == True:
-        data["Категория"]["IT"]=False
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Категория"]["IT"] == True:
+        user_data_for_session["Категория"]["IT"]=False
     else:
-        data['Категория']["IT"]=True
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session['Категория']["IT"]=True
     return render_template('index.html')
 
 @app.route('/save_text_3')
 def save_text_3():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Категория"]["Юриспруденция"] == True:
-        data["Категория"]["Юриспруденция"]=False
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Категория"]["Юриспруденция"] == True:
+        user_data_for_session["Категория"]["Юриспруденция"]=False
     else:
-        data['Категория']["Юриспруденция"]=True
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session['Категория']["Юриспруденция"]=True
     return render_template('index.html')
 
 @app.route('/save_text_4')
 def save_text_4():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Категория"]["Новый год"] == True:
-        data["Категория"]["Новый год"]=False
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Категория"]["Новый год"] == True:
+        user_data_for_session["Категория"]["Новый год"]=False
     else:
-        data['Категория']["Новый год"]=True
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session['Категория']["Новый год"]=True
     return render_template('index.html')
 
 @app.route('/save_text_5')
 def save_text_5():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Категория"]["Marvel"] == True:
-        data["Категория"]["Marvel"]=False
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Категория"]["Marvel"] == True:
+        user_data_for_session["Категория"]["Marvel"]=False
     else:
-        data['Категория']["Marvel"]=True
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session['Категория']["Marvel"]=True
     return render_template('index.html')
 
 @app.route('/save_text_6')
 def save_text_6():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Категория"]["Природа"] == True:
-        data["Категория"]["Природа"]=False
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Категория"]["Природа"] == True:
+        user_data_for_session["Категория"]["Природа"]=False
     else:
-        data['Категория']["Природа"]=True
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session['Категория']["Природа"]=True
     return render_template('index.html')
 
 @app.route('/save_text_7')
 def save_text_7():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Категория"]["Еда"] == True:
-        data["Категория"]["Еда"]=False
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Категория"]["Еда"] == True:
+        user_data_for_session["Категория"]["Еда"]=False
     else:
-        data['Категория']["Еда"]=True
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session['Категория']["Еда"]=True
     return render_template('index.html')
 
 @app.route('/save_text_8')
 def save_text_8():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Категория"]["Фильмы"] == True:
-        data["Категория"]["Фильмы"]=False
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Категория"]["Фильмы"] == True:
+        user_data_for_session["Категория"]["Фильмы"]=False
     else:
-        data['Категория']["Фильмы"]=True
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session['Категория']["Фильмы"]=True
     return render_template('index.html')
 
 @app.route('/save_text_10')
 def save_text_10():
-    with open('session.json', 'r', encoding='utf-8') as f:
-        data=json.load(f)
-    if data["Категория"]["Свой набор"]["Статус"] == True:
-        data["Категория"]["Свой набор"]["Статус"]=False
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if user_data_for_session["Категория"]["Свой набор"]["Статус"] == True:
+        user_data_for_session["Категория"]["Свой набор"]["Статус"]=False
     else:
-        data['Категория']["Свой набор"]["Статус"]=True
-    with open('session.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        user_data_for_session['Категория']["Свой набор"]["Статус"]=True
     return render_template('index.html')
 
 @app.route('/save_text_9', methods=['GET', 'POST']) ###
 def save_text_9():
+    user_data_for_session = user_data.get(session['session_id'], {})
     words=[]
     if request.method == 'POST':
-        new_word = request.form['new_word']
-        with open('session.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
+        new_word = request.form['word']
         for i in range(15):
-            if not data["Категория"]["Свой набор"]["Слова"][str(i)]:
-                data["Категория"]["Свой набор"]["Слова"][str(i)]=new_word
+            if not user_data_for_session["Категория"]["Свой набор"]["Слова"][str(i)]:
+                user_data_for_session["Категория"]["Свой набор"]["Слова"][str(i)]=new_word
                 break
         for j in range(1, 15):
-            if data["Категория"]["Свой набор"]["Слова"][str(i)]:
-                words.append(data["Категория"]["Свой набор"]["Слова"][str(j)])
-        with open('session.json', 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+            if user_data_for_session["Категория"]["Свой набор"]["Слова"][str(i)]:
+                words.append(user_data_for_session["Категория"]["Свой набор"]["Слова"][str(j)])
     return render_template('add_words.html', words=words)
 
 @app.route('/game') ###
 def game():
-    return 'Соси'
+    if prov_nast() == 'дл раунда':
+        return 'Соси дл раунда'
+    elif prov_nast() == 'кол-во команд':
+        return 'Соси кол-во команд'
+    elif prov_nast() == 'кол-во оч':
+        return 'Соси кол-во оч'
+    elif prov_nast():
+        return 'Не соси'
+    return 'Просто соси'
 
 if __name__ == '__main__':
     app.run(debug=True)
