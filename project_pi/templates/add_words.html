@@ -2,39 +2,62 @@
 <html>
 <head>
     <title>Добавление слов</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-            text-align: left;
-            max-width: 300px;
-            margin: 20px auto;
-        }
-        li {
-            background-color: #f2f2f2;
-            padding: 10px;
-            margin-bottom: 5px;
-        }
-    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>Добавление слов</h1>
-
-    <form method="post">
-        <input type="text" name="word" placeholder="Вводи новые слова">
-        <button type="submit">Добавить слово</button>
-    </form>
-
-    <h2>Слова:</h2>
-    <ul>
+    <h1>Добавление слов в категорию 'Свой набор'</h1>
+    <input type="text" id="wordInput" placeholder="Введите слово">
+    <button id="addWord">Добавить слово</button>
+    <ul id="wordList">
         {% for word in words %}
-        <li>{{ word }}</li>
+        <li>{{ word }} <button class="removeWord" data-word="{{ word }}">Remove</button></li>
         {% endfor %}
     </ul>
+
+    <script>
+        $(document).ready(function() {
+            $('#addWord').click(function() {
+                var word = $('#wordInput').val();
+                if (word) {
+                    $.ajax({
+                        url: '/add_word',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({'word': word}),
+                        success: function(response) {
+                            $('#wordInput').val('');
+                            updateWordList(response.words);
+                        }
+                    });
+                }
+            });
+
+            $('#wordList').on('click', '.removeWord', function() {
+                var word = $(this).data('word');
+                $.ajax({
+                    url: '/remove_word',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({'word': word}),
+                    success: function(response) {
+                        updateWordList(response.words);
+                    }
+                });
+            });
+        });
+
+        function updateWordList(words) {
+            var wordList = $('#wordList');
+            wordList.empty();
+            $.each(words, function(index, word) {
+                wordList.append('<li>' + word + ' <button class="removeWord" data-word="' + word + '">Удалить</button></li>');
+            });
+        }
+    </script>
+</body>
+</html>
+
+
 <div class="buttons">
     <div class="back-h">
         <a href="save" class="back">Дальше</a>
