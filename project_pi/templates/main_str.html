@@ -43,7 +43,7 @@
   <div class="container">
     <div class="headerline">
       <div class="header-logo">
-        <img src="logo.png" width="147" height="135" alt="">
+        <img src="{{ url_for('static', filename='pictures/logo.png') }} " width="147" height="135" alt="">
       </div>
       <div class="nav">
         <div class="nazv">
@@ -60,7 +60,7 @@
 
     <div class="headerdown">
       <div class="image">
-        <img id=image src="C:\Users\User\Desktop\программирование\project_pi\templates\card.jpg" width="200" height="350" alt="">
+        <img id=image src="{{ url_for('static', filename='pictures/card.jpg') }}" width="200" height="350" alt="">
         </div>
       <div class="headertitle">
         Игра "Элиас" (или "Алиас") - это командная настольная игра, в которой один из участников пытается объяснить слово или фразу, не используя само слово, а только описывая его синонимы, ассоциации или другие подсказки. Остальные участники команды должны догадаться, о каком слове идет речь.
