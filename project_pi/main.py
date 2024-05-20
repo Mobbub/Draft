@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-import uuid, os
+import uuid, os, time, random
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY') or 'default_secret_key'
 user_data = {}
+words=[]
 
 words_igr = {
     "Базовый набор": {
@@ -197,7 +198,16 @@ def db_word():
                 words_ret.append(value_1)
     return words_ret
 
-@app.route('/', methods=['GET', 'POST'])
+def team_vivod():
+    user_data_for_session = user_data.get(session['session_id'], {})
+    slov = user_data_for_session["Команды"]
+    result = []
+    for key, value in slov.items():
+        if slov[key]['Статус']:
+            result.append(slov[key]['Название'])
+    return result
+
+@app.route('/', methods=['GET'])
 def main_str():
     session.clear()
     session_id = session.get('session_id', None)
@@ -538,23 +548,28 @@ def main_str():
             "Команды": {
                 "1": {
                     "Статус": False,
-                    "Название": ''
+                    "Название": '',
+                    "Баллы": 0
                 },
                 "2": {
                     "Статус": False,
-                    "Название": ''
+                    "Название": '',
+                    "Баллы": 0
                 },
                 "3": {
                     "Статус": False,
-                    "Название": ''
+                    "Название": '',
+                    "Баллы": 0
                 },
                 "4": {
                     "Статус": False,
-                    "Название": ''
+                    "Название": '',
+                    "Баллы": 0
                 },
                 "5": {
                     "Статус": False,
-                    "Название": ''
+                    "Название": '',
+                    "Баллы": 0
                 }
             }
         }
@@ -726,7 +741,6 @@ def save_set_7():
     user_data_for_session["Количество очков для победы"]["80"]=False
     return render_template('index_3.html')
 
-
 @app.route('/save_set_8')
 def save_set_8():
     user_data_for_session = user_data.get(session['session_id'], {})
@@ -741,7 +755,6 @@ def save_set_8():
     user_data_for_session["Количество очков для победы"]["60"]=False
     user_data_for_session["Количество очков для победы"]["80"]=False
     return render_template('index_3.html')
-
 
 @app.route('/save_set_9')
 def save_set_9():
@@ -886,8 +899,6 @@ def save_text_9():
         return redirect(url_for("main_str"))
     return render_template('add_words.html')
 
-words=[]
-
 @app.route('/add_word', methods=['POST'])
 def add_word():
     user_data_for_session = user_data.get(session['session_id'], {})
@@ -915,7 +926,41 @@ def remove_word():
             break
     return jsonify({'words': words})
 
-@app.route('/game') ###
+def db_dl():
+    user_data_for_session = user_data.get(session['session_id'], {})
+    slov_dl = user_data_for_session['Длительность раунда']
+    result = ''
+    for key, value in slov_dl.items():
+        if slov_dl[key]:
+            result=int(key)
+            break
+    return result
+
+def db_och():
+    user_data_for_session = user_data.get(session['session_id'], {})
+    slov_och = user_data_for_session['Количество очков для победы']
+    result = ''
+    for key, value in slov_och.items():
+        if slov_och[key]:
+            result=int(key)
+            break
+    return result
+
+class Game():
+    def __init__(self) -> None:
+        self.words = db_word()
+        self.dl_raund = db_dl()
+        self.och_pob = db_och()
+        self.team_1 = team_vivod()    
+        self.flag = False
+
+current_word = None
+guessed_words = []
+start_time = None
+time_up = False
+guessed_after_time_up = False
+
+@app.route('/game', methods = ['GET', 'POST']) ###
 def game():
     user_data_for_session = user_data.get(session['session_id'], {})
     if not user_data_for_session:
@@ -931,9 +976,118 @@ def game():
     elif prov_nast() == 'категории':
         return 'Соси, выбери категории'
     elif prov_nast():
-        word = db_word()
-        return f'Не соси {word}'
-    return 'Просто соси'
+        game = Game()
+        global start_time, current_word, guessed_words, time_up, guessed_after_time_up  # Используем глобальные переменные
+        if request.method == 'POST':
+            if start_time is None:  # Игра еще не началась
+                return jsonify({'error': 'Игра не началась'})
+            if request.form['action'] == 'guess':
+                if current_word is None:
+                    return jsonify({'error': 'Слово не было загружено'})
+                if time_up and guessed_after_time_up:  # Время вышло и кнопка "Отгадал" уже была нажата
+                    return jsonify({'error': 'Вы уже нажали кнопку "Отгадал" после истечения времени'})
+                if time_up:  # Время вышло
+                    guessed_words = []  # Очищаем список угаданных слов
+                    time_up = False  # Сбрасываем флаг истечения времени
+                    guessed_after_time_up = True  # Устанавливаем флаг нажатия кнопки "Отгадал" после истечения времени
+                    start_time = None  # Сбрасываем время начала игры
+                else:
+                    guessed_words.append(current_word)  # Добавляем текущее слово в список угаданных
+                list_length = len(game.words)
+                random_index = random.randint(0, list_length - 1)
+                new_word = game.words[random_index]
+                # new_word = random.choice([w for w in game.words if w not in guessed_words])
+                current_word = new_word
+                return jsonify({'new_word': new_word, 'team_1': game.team_1, 'guessed_words': guessed_words, 'time_up': time_up, 'guessed_after_time_up': guessed_after_time_up})
+            elif request.form['action'] == 'guess_pr':
+                if current_word is None:
+                    return jsonify({'error': 'Слово не было загружено'})
+                if time_up and guessed_after_time_up:  # Время вышло и кнопка "Отгадал" уже была нажата
+                    return jsonify({'error': 'Вы уже нажали кнопку "Отгадал" после истечения времени'})
+                if time_up:  # Время вышло
+                    guessed_words = []  # Очищаем список угаданных слов
+                    time_up = False  # Сбрасываем флаг истечения времени
+                    guessed_after_time_up = True  # Устанавливаем флаг нажатия кнопки "Отгадал" после истечения времени
+                    start_time = None  # Сбрасываем время начала игры
+                else:
+                    guessed_words.append(current_word)  # Добавляем текущее слово в список угаданных
+                list_length = len(game.words)
+                random_index = random.randint(0, list_length - 1)
+                new_word = game.words[random_index]
+                # random.choice([w for w in game.words if w not in guessed_words])
+                current_word = new_word
+                return jsonify({'new_word': new_word, 'team_1': game.team_1, 'guessed_words': guessed_words, 'time_up': time_up, 'guessed_after_time_up': guessed_after_time_up})        
+            else:
+                return jsonify({'error': 'Неизвестное действие'})
+        else:
+            if start_time is None:  # Игра еще не началась
+                current_word = random.choice(game.words)
+                return render_template('game.html', team_1 = game.team_1, word=current_word, guessed_words=guessed_words, time_up=time_up, guessed_after_time_up=guessed_after_time_up)
+            else:  # Игра уже идет
+                word = current_word
+                return render_template('game.html', team_1 = game.team_1, word=word, start_time=start_time, guessed_words=guessed_words, time_up=time_up, guessed_after_time_up=guessed_after_time_up)
+    else:
+        return 'Просто соси'
+
+@app.route('/start_game', methods=['POST'])
+def start_game():
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if not user_data_for_session:
+        return redirect(url_for("main_str"))
+    game = Game()
+    global start_time, current_word, guessed_words, time_up, guessed_after_time_up
+    if not guessed_after_time_up:  # Проверяем, что пользователь нажал кнопку "Отгадал" после истечения времени
+        start_time = time.time()
+        current_word = random.choice(game.words)
+        guessed_words = []  # Очищаем список угаданных слов
+        time_up = False  # Сбрасываем флаг истечения времени
+        guessed_after_time_up = False  # Сбрасываем флаг нажатия кнопки "Отгадал" после истечения времени
+        return jsonify({'word': current_word, 'team_1': game.team_1, 'start_time': start_time, 'guessed_words': guessed_words, 'time_up': time_up, 'guessed_after_time_up': guessed_after_time_up})
+    else:
+        return jsonify({'error': 'Вы должны нажать кнопку "Отгадал" после истечения времени, чтобы начать новую игру'})
+
+@app.route('/name_kom', methods = ['GET', 'POST'])
+def name_kom():
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if not user_data_for_session:
+        return redirect(url_for("main_str"))
+    game = Game()
+    if request.method == 'POST':
+        data = request.get_json()
+        teams_1 = data.get('team_1')
+        team_new = ''
+        chet = data.get('chet')
+        for i in range(len(game.team_1) + 1):
+            if i == len(game.team_1) - 1:
+                team_new = game.team_1[0]
+                break
+            if game.team_1[i] == teams_1:
+                team_new = game.team_1[i+1]
+                break
+        # print(chet, teams_1, team_new, game.och_pob)
+        for key, value in user_data_for_session['Команды'].items():
+            if user_data_for_session['Команды'][key]['Название'] == teams_1: 
+                user_data_for_session['Команды'][key]['Баллы']+=chet
+                if user_data_for_session['Команды'][key]['Баллы'] >= game.och_pob:
+                    game.flag = True
+                break
+        # print(user_data_for_session['Команды'][key]['Название'], teams_1)
+        # print(user_data_for_session['Команды'][key]['Баллы'])
+        # print(chet)
+        # print(type(chet))
+        return jsonify({'team_1': team_new, 'red_flag': game.flag})
+    return redirect(url_for("main_str"))
+ 
+@app.route('/time_1', methods = ['GET'])
+def time_1():
+    user_data_for_session = user_data.get(session['session_id'], {})
+    if not user_data_for_session:
+        return redirect(url_for("main_str"))
+    game = Game()
+    data = {
+        'time_1': game.dl_raund
+    }
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True)
