@@ -4,32 +4,31 @@ import uuid, os, time, random
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY') or 'default_secret_key'
 user_data = {}
-words=[]
 
 words_igr = {
     "Базовый набор": {
-        "1": "Игра",
-        "2": "Глобус",
-        "3": "Квадрат",
-        "4": "Мяч",
-        "5": "Сигарета",
-        "6": "Стул",
-        "7": "Альбинос",
-        "8": "Телефон",
-        "9": "Гитара",
-        "10": "Карандаш"
+        "1": "fdsf",
+        "2": "dsfdsf",
+        "3": "dsfsdf",
+        "4": "dddsfdsf",
+        "5": "wewqewq",
+        "6": "ewqefds",
+        "7": "gdfgfdg",
+        "8": "gdfgdfg",
+        "9": "gfdgfdg",
+        "10": "fdgfdgfdg"
     },
     "IT": {
-        "1": "Асинхроность",
-        "2": "Сеньёр",
-        "3": "Фул-стек",
-        "4": "HTML",
-        "5": "Python",
-        "6": "Linux",
-        "7": "IP",
-        "8": "Хакатон",
-        "9": "Разработчик",
-        "10": "Фронт-енд"
+        "1": "gfdgdfgdfg",
+        "2": "fgdbvcbvc",
+        "3": "ghfgjhgf",
+        "4": "jghyjyt",
+        "5": "nbvnvb",
+        "6": "serewr",
+        "7": "kuyk",
+        "8": "bvcbvc",
+        "9": "tttt",
+        "10": "jjjjjjj"
     },
     "Юриспруденция": {
         "1": "fdgqwe",
@@ -167,14 +166,14 @@ def prov_nast():
         a+=1
 
     for key, value in slov_kat.items():
-        if key == 'Свой набор':
-            if status_sv:
-                shet_kat+=1
-        else:
+        if status_sv:
+            shet_kat+=1
+            break
+        if key != 'Свой набор':
             if slov_kat[key]:
                 shet_kat+=1
-
-    if shet_kat>2:
+                break
+    if shet_kat>0:
         a+=1
     else:
         return 'категории'
@@ -899,6 +898,8 @@ def save_text_9():
         return redirect(url_for("main_str"))
     return render_template('add_words.html')
 
+wordss = []
+
 @app.route('/add_word', methods=['POST'])
 def add_word():
     user_data_for_session = user_data.get(session['session_id'], {})
@@ -906,11 +907,15 @@ def add_word():
         return redirect(url_for("main_str"))
     word = request.json['word']
     print(word)
-    words.append(word)
+    words = []
     for i in range(1, 301):
         if not user_data_for_session["Категория"]["Свой набор"]["Слова"][str(i)]:
             user_data_for_session["Категория"]["Свой набор"]["Слова"][str(i)]=word
             break
+    for j in range(1, 301):
+            if user_data_for_session["Категория"]["Свой набор"]["Слова"][str(j)]:
+                a = user_data_for_session["Категория"]["Свой набор"]["Слова"][str(j)]
+                words.append(a)
     return jsonify({'words': words})
 
 @app.route('/remove_word', methods=['POST'])
@@ -919,11 +924,15 @@ def remove_word():
     if not user_data_for_session:
         return redirect(url_for("main_str"))
     word = request.json['word']
-    words.remove(word)
+    words = []
     for i in range(1, 301):
         if user_data_for_session["Категория"]["Свой набор"]["Слова"][str(i)] == word:
             user_data_for_session["Категория"]["Свой набор"]["Слова"][str(i)]=''
             break
+    for j in range(1, 301):
+            if user_data_for_session["Категория"]["Свой набор"]["Слова"][str(j)]:
+                a = user_data_for_session["Категория"]["Свой набор"]["Слова"][str(j)]
+                words.append(a)
     return jsonify({'words': words})
 
 def db_dl():
@@ -951,7 +960,7 @@ class Game():
         self.words = db_word()
         self.dl_raund = db_dl()
         self.och_pob = db_och()
-        self.team_1 = team_vivod()
+        self.team_1 = team_vivod()    
         self.flag = False
 
 current_word = None
@@ -1016,7 +1025,7 @@ def game():
                 new_word = game.words[random_index]
                 # random.choice([w for w in game.words if w not in guessed_words])
                 current_word = new_word
-                return jsonify({'new_word': new_word, 'team_1': game.team_1, 'guessed_words': guessed_words, 'time_up': time_up, 'guessed_after_time_up': guessed_after_time_up})
+                return jsonify({'new_word': new_word, 'team_1': game.team_1, 'guessed_words': guessed_words, 'time_up': time_up, 'guessed_after_time_up': guessed_after_time_up})        
             else:
                 return jsonify({'error': 'Неизвестное действие'})
         else:
@@ -1066,7 +1075,7 @@ def name_kom():
                 break
         # print(chet, teams_1, team_new, game.och_pob)
         for key, value in user_data_for_session['Команды'].items():
-            if user_data_for_session['Команды'][key]['Название'] == teams_1:
+            if user_data_for_session['Команды'][key]['Название'] == teams_1: 
                 user_data_for_session['Команды'][key]['Баллы']+=chet
                 if user_data_for_session['Команды'][key]['Баллы'] >= game.och_pob:
                     game.flag = True
@@ -1077,7 +1086,7 @@ def name_kom():
         # print(type(chet))
         return jsonify({'team_1': team_new, 'red_flag': game.flag})
     return redirect(url_for("main_str"))
-
+ 
 @app.route('/time_1', methods = ['GET'])
 def time_1():
     user_data_for_session = user_data.get(session['session_id'], {})
