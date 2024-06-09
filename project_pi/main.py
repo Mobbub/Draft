@@ -897,9 +897,7 @@ def save_text_9():
     if not user_data_for_session:
         return redirect(url_for("main_str"))
     return render_template('add_words.html')
-
-wordss = []
-
+    
 @app.route('/add_word', methods=['POST'])
 def add_word():
     user_data_for_session = user_data.get(session['session_id'], {})
