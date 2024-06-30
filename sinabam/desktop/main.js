@@ -10,7 +10,12 @@ function creatWindow() {
         height: 500,
         frame: null,
         transparent: true,
-        icon: __dirname + "/img/icon.png"
+        icon: __dirname + "/img/icon.png",
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true,
+        },
     });
 
 
