@@ -9,7 +9,7 @@ function sendToPython() {
     mode: 'text'
   };
   
-  PythonShell.run('main.py', options, function (err, results) {
+  PythonShell.run("main.py", options, function (err, results) {
     if (err) throw err;
     // результаты - это массив, состоящий из сообщений, собранных во время выполнения
     console.log('response: ', results);
@@ -41,6 +41,3 @@ console.log(4)
 btn.dispatchEvent(new Event('click'))
 
 console.log(5)
-
-
-
