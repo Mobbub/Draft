@@ -19,7 +19,7 @@ class WorkDB():
 @app.route("/<input>")
 @cross_origin()
 def server(input):
-    print(input)
+    return input
     # return main(input)
 
 if __name__ == "__main__":
