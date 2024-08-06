@@ -226,9 +226,13 @@
 
 Запуск проекта:
 Скачиваем зависимости:
+
 pip install flask
+
 pip install mysql.connector
+
 pip install bcrypt
+
 pip install Werkzeug
 
 Запускаем файл app.py (при этом находясь в корневой папке) командой python app.py
